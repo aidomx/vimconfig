@@ -1,0 +1,33 @@
+" Main Vim configuration file for Termux/HP
+" Modular structure for full-stack development
+
+" Set runtime path to include local vim config
+set runtimepath^=~/.local/vim
+
+" Load modular configuration
+runtime! core/plugins.vim
+runtime! core/settings.vim
+runtime! utils/termux.vim
+runtime! utils/ui.vim
+
+" Load language configurations
+runtime! langs/web.vim
+runtime! langs/bash.vim
+runtime! langs/c.vim
+runtime! langs/php.vim
+runtime! langs/python.vim
+runtime! langs/go.vim
+
+" Load framework configurations
+runtime! frameworks/laravel.vim
+runtime! frameworks/nextjs.vim
+
+" Load completion and mappings last
+runtime! utils/completion.vim
+" runtime! utils/formating.vim
+runtime! core/mappings.vim
+
+" Load plugins (must be after plugin declarations)
+if filereadable(expand("~/.local/vim/core/plugins.vim"))
+  source ~/.local/vim/core/plugins.vim
+endif
