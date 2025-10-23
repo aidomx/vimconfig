@@ -159,10 +159,10 @@ Leader is set to `<Space>`
 ### Tab Management
 
 | Shortcut     | Action       |
-| ------------ | ------------ | ------------ |
+| ------------ | ------------ |
 | `<leader>to` | New tab      |
 | `<leader>tc` | Close tab    |
-|              | `<leader>tp` | Previous tab |
+| `<leader>tp` | Previous tab |
 
 ### Code Actions
 
