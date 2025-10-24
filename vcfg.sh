@@ -44,9 +44,9 @@ print_info() {
 }
 
 print_header() {
-  echo -e "${CYAN}================================${NC}"
+  echo -e "${CYAN}$(printf '=%.0s' {1..58})${NC}"
   echo -e "${WHITE}$1${NC}"
-  echo -e "${CYAN}================================${NC}"
+  echo -e "${CYAN}$(printf '=%.0s' {1..58})${NC}"
 }
 
 spinner() {
@@ -378,6 +378,9 @@ vcfg_search() {
   if [[ "$query" =~ / ]]; then
     username=$(echo "$query" | cut -d'/' -f1)
     repo_name=$(echo "$query" | cut -d'/' -f2)
+  elif [[ "$query" =~ ^[0-9]+$ ]]; then
+    print_warning "Query '$query' is invalid"
+    return 0
   fi
 
   # Comprehensive search variants - lebih dalam dan flexible
@@ -493,6 +496,11 @@ vcfg_search() {
 
   # Parse response dan format output
   local output
+  if [[ "$page" =~ [a-zA-Z] ]]; then
+    print_warning "Page '$page' must contain number only"
+    return 0
+  fi
+
   output=$(format_search_results "$response" "$query" "$page" "$per_page")
 
   # Tampilkan dengan less untuk interactive scrolling
@@ -532,7 +540,7 @@ format_search_results() {
   # Header
   output+="${BOLD}Search results for: ${CYAN}${query}${NC}${BOLD}\n"
   output+="Page: ${page} | Results: ${total_count} total${NC}\n"
-  output+="$(printf '=%.0s' {1..60})\n\n"
+  output+="$(printf '=%.0s' {1..58})\n\n"
 
   # Parse results
   if command -v jq &> /dev/null; then
@@ -592,7 +600,7 @@ format_search_results() {
   fi
 
   # Footer
-  output+="\n$(printf '=%.0s' {1..60})\n"
+  output+="\n$(printf '=%.0s' {1..58})\n"
   output+="${BOLD}Navigation:${NC}\n"
   output+="  - Press ${GREEN}q${NC} to quit\n"
   output+="  - Use ${GREEN}arrow keys${NC} or ${GREEN}Page Up/Down${NC} to scroll\n"
