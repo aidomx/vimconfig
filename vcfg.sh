@@ -96,7 +96,7 @@ vcfg_help() {
   echo "  vcfg add preservim/nerdtree"
   echo "  vcfg remove vim-airline"
   echo "  vcfg disable coc.nvim"
-  echo "  vcfg search fuzzy finder"
+  echo "  vcfg search fuzzy"
   echo "  vcfg list"
   echo ""
   echo -e "${WHITE}PLUGIN FORMAT:${NC}"
