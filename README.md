@@ -93,6 +93,16 @@ sudo pacman -S php composer
 pkg install php composer
 ```
 
+## Quick Started
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/aidomx/vimconfig/main/install.sh | bash
+```
+
+```bash
+wget -qO- https://raw.githubusercontent.com/aidomx/vimconfig/main/install.sh | bash
+```
+
 ## ⚙️ Installation
 
 ### 1. Clone Repository
