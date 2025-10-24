@@ -1,3 +1,6 @@
+" Load plugins declarations
+source ~/.local/vim/.vimrc-plugins
+
 " Main Vim configuration file for Termux/HP
 " Modular structure for full-stack development
 
@@ -27,8 +30,3 @@ runtime! utils/autopairs.vim
 runtime! utils/completion.vim
 " runtime! utils/formating.vim
 runtime! core/mappings.vim
-
-" Load plugins (must be after plugin declarations)
-if filereadable(expand("~/.local/vim/core/plugins.vim"))
-  source ~/.local/vim/core/plugins.vim
-endif
