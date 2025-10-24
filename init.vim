@@ -23,6 +23,7 @@ runtime! frameworks/laravel.vim
 runtime! frameworks/nextjs.vim
 
 " Load completion and mappings last
+runtime! utils/autopairs.vim
 runtime! utils/completion.vim
 " runtime! utils/formating.vim
 runtime! core/mappings.vim

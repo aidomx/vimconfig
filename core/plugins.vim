@@ -1,3 +1,10 @@
+" Plugin Manager
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
 " ---------------------------
 " Plugins (vim-plug)
 " ---------------------------
@@ -11,7 +18,7 @@ Plug 'vim-airline/vim-airline-themes'
 
 " Completion / LSP / IDE-like
 Plug 'neoclide/coc.nvim', { 'branch': 'release' }
-Plug 'github/copilot.vim'
+" Plug 'github/copilot.vim'
 
 " Tools
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -51,6 +58,7 @@ Plug 'tpope/vim-fugitive'
 
 " Utility
 Plug 'tpope/vim-surround'
-Plug 'jiangmiao/auto-pairs'
+" Plug 'jiangmiao/auto-pairs'
+Plug 'Raimondi/delimitMate'
 
 call plug#end()
