@@ -1,5 +1,14 @@
-" Load plugins declarations
+" Plugin Manager
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+"  Load plugins declarations
+call plug#begin('~/.vim/plugged')
 source ~/.local/vim/.vimrc-plugins
+call plug#end()
 
 " Main Vim configuration file for Termux/HP
 " Modular structure for full-stack development
