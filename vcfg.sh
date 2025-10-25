@@ -143,7 +143,7 @@ vcfg_add() {
 
   # Install the plugin
   print_info "Installing plugin..."
-  vim -u "$HOME/.vimrc" -c 'PlugInstall' -c 'qa!' > /dev/null 2>&1 &
+  vim -c 'PlugInstall' -c 'qa!' > /dev/null 2>&1 &
   local vim_pid=$!
 
   spinner $vim_pid
@@ -175,13 +175,14 @@ vcfg_remove() {
   print_warning "Removing plugin: ${CYAN}${plugin}${NC}"
 
   # Remove from plugins.vim
-  sed -i "/Plug.*${plugin}/d" "$PLUGINS_FILE"
+  plugin_name=$(echo "$plugin" | awk -F'/' {'print $2'})
+  sed -i "/Plug.*${plugin_name}/d" "$PLUGINS_FILE"
 
   print_success "Plugin removed from configuration"
 
   # Clean unused plugins
   print_info "Cleaning unused plugins..."
-  vim -u "$HOME/.vimrc" -c 'PlugClean!' -c 'qa!' > /dev/null 2>&1 &
+  vim -c 'PlugClean[!]' -c 'qa!' > /dev/null 2>&1 &
   local vim_pid=$!
 
   spinner $vim_pid
