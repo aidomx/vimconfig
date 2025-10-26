@@ -47,13 +47,13 @@ vcfg_cmd_list() {
 
   # Show summary
   local total=$((count_enabled + count_disabled))
-  print_info "Summary: enabled=${count_enabled} disabled=${count_disabled} installed=${count_installed} total=${total}"
+  # print_info "Summary: enabled=${count_enabled} disabled=${count_disabled} installed=${count_installed} total=${total}"
 
-  # print_info "Summary:"
-  # echo -e "  ${GREEN}Enabled:${NC}     ${count_enabled}"
-  # echo -e "  ${YELLOW}Disabled:${NC}    ${count_disabled}"
-  # echo -e "  ${CYAN}Installed:${NC}   ${count_installed}"
-  # echo -e "  ${WHITE}Total:${NC}       ${total}"
+  print_info "Summary:"
+  echo -e "  ${GREEN}Enabled:${NC}     ${count_enabled}"
+  echo -e "  ${YELLOW}Disabled:${NC}    ${count_disabled}"
+  echo -e "  ${CYAN}Installed:${NC}   ${count_installed}"
+  echo -e "  ${WHITE}Total:${NC}       ${total}"
 
   # Show orphaned plugins (installed but not in config)
   if [ -d "$VIM_PLUGINS_DIR" ] && [ "$(ls -A $VIM_PLUGINS_DIR 2> /dev/null)" ]; then
