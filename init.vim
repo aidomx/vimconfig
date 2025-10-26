@@ -6,7 +6,7 @@ if empty(glob('~/.vim/autoload/plug.vim'))
 endif
 
 "  Load plugins declarations
-source ~/.local/vim/vimrc-plugins
+source ~/.local/vim/core/plugins.vim
 
 " Main Vim configuration file for Termux/HP
 " Modular structure for full-stack development
