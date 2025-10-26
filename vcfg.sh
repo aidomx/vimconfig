@@ -174,9 +174,11 @@ vcfg_remove() {
 
   print_warning "Removing plugin: ${CYAN}${plugin}${NC}"
 
+  # Escape forward slashes untuk sed
+  local plugin_escaped=$(echo "$plugin" | sed 's/\//\\\//g')
+
   # Remove from plugins.vim
-  plugin_name=$(echo "$plugin" | awk -F'/' {'print $2'})
-  sed -i "/Plug.*${plugin_name}/d" "$PLUGINS_FILE"
+  sed -i "/Plug.*${plugin_escaped}/d" "$PLUGINS_FILE"
 
   print_success "Plugin removed from configuration"
 
@@ -215,8 +217,11 @@ vcfg_disable() {
 
   print_info "Disabling plugin: ${CYAN}${plugin}${NC}"
 
+  # Escape forward slashes untuk sed
+  local plugin_escaped=$(echo "$plugin" | sed 's/\//\\\//g')
+
   # Comment out the plugin line
-  sed -i "s/^Plug.*${plugin}/\" &/" "$PLUGINS_FILE"
+  sed -i "s/^Plug.*${plugin_escaped}/\" &/" "$PLUGINS_FILE"
 
   print_success "Plugin '${GREEN}${plugin}${NC}' disabled successfully!"
   print_info "Restart Vim to apply changes"
@@ -233,6 +238,9 @@ vcfg_enable() {
 
   check_vim_config
 
+  # Escape forward slashes untuk sed
+  local plugin_escaped=$(echo "$plugin" | sed 's/\//\\\//g')
+
   # Check if plugin exists and is commented
   if ! grep -q "^\".*Plug.*${plugin}" "$PLUGINS_FILE" 2> /dev/null; then
     if grep -q "^Plug.*${plugin}" "$PLUGINS_FILE" 2> /dev/null; then
@@ -246,8 +254,8 @@ vcfg_enable() {
 
   print_info "Enabling plugin: ${CYAN}${plugin}${NC}"
 
-  # Uncomment the plugin line
-  sed -i "s/^\" Plug.*${plugin}/Plug '${plugin}'/" "$PLUGINS_FILE"
+  # Uncomment the plugin line - gunakan delimiter yang berbeda (#)
+  sed -i "s#^\" \\(Plug.*${plugin_escaped}\\)#\\1#" "$PLUGINS_FILE"
 
   print_success "Plugin '${GREEN}${plugin}${NC}' enabled successfully!"
 
