@@ -18,15 +18,15 @@ endif
 " Main Configuration
 " ---------------------------
 if g:is_neovim
-  set runtimepath^=~/.vim,~/.vim/after,~/.local/vim
+  set runtimepath^=~/.vim,~/.vim/after,~/.config/vim
   set packpath^=~/.vim
 else
   " Set runtime path to include local vim config
-  set runtimepath^=~/.local/vim
+  set runtimepath^=~/.config/vim
 endif
 
 " Load plugins declarations
-source ~/.local/vim/core/plugins.vim
+source ~/.config/vim/core/plugins.vim
 
 " Load core configurations
 runtime! core/settings.vim
