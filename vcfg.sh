@@ -253,7 +253,7 @@ vcfg_enable() {
 
   # Install if not already installed
   print_info "Installing plugin if needed..."
-  vim -u "$HOME/.vimrc" -c 'PlugInstall' -c 'qa!' > /dev/null 2>&1 &
+  vim -c 'PlugInstall' -c 'qa!' > /dev/null 2>&1 &
   local vim_pid=$!
 
   spinner $vim_pid
@@ -759,7 +759,7 @@ vcfg_clean() {
   print_header "Cleaning Unused Plugins"
 
   print_info "Removing unused plugins..."
-  vim -u "$HOME/.vimrc" -c 'PlugClean!' -c 'qa!' > /dev/null 2>&1 &
+  vim -c 'PlugClean[!]' -c 'qa!' > /dev/null 2>&1 &
   local vim_pid=$!
 
   spinner $vim_pid
