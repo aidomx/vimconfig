@@ -35,5 +35,5 @@ autocmd BufWritePre *.c,*.cpp,*.h,*.hpp :ALEFix
 " Filetype specific settings
 autocmd FileType c setlocal commentstring=//\ %s foldmethod=syntax
 autocmd FileType cpp setlocal commentstring=//\ %s foldmethod=syntax
-autocmd FileType c setlocal shiftwidth=4 tabstop=4
-autocmd FileType cpp setlocal shiftwidth=4 tabstop=4
+autocmd FileType c setlocal shiftwidth=2 tabstop=2
+autocmd FileType cpp setlocal shiftwidth=2 tabstop=2

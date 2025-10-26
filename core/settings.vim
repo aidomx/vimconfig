@@ -43,6 +43,7 @@ set backupdir=~/.local/vim/backups//
 set directory=~/.local/vim/swaps//
 set undodir=~/.local/vim/undo//
 set undofile
+set timeout
 
 " Create directories if they don't exist
 silent! call mkdir(expand('~/.local/vim/backups'), 'p')

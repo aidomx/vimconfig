@@ -67,3 +67,11 @@ function! ToggleMaximizeSplit()
     let g:split_maximized = 0
   endif
 endfunction
+
+" ---------------------------
+" Comment Toggle dengan NERDCommenter
+" ---------------------------
+
+" Toggle comment untuk line atau visual selection
+nmap <leader>c <Plug>NERDCommenterToggle
+vmap <leader>c <Plug>NERDCommenterToggle
