@@ -3,7 +3,7 @@
 " ---------------------------
 
 " Leader key (space lebih mudah di HP)
-let mapleader = ""
+let mapleader = " "
 
 " File navigation
 nnoremap <silent>tt :NERDTreeToggle<CR>
