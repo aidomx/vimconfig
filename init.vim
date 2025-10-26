@@ -15,12 +15,15 @@ source ~/.local/vim/core/plugins.vim
 set runtimepath^=~/.local/vim
 
 " Load modular configuration
+runtime! core/coc.vim
+runtime! core/fonts.vim
 runtime! core/plugins.vim
 runtime! core/settings.vim
 runtime! utils/termux.vim
 runtime! utils/ui.vim
 
 " Load language configurations
+runtime! langs/android.vim
 runtime! langs/web.vim
 runtime! langs/bash.vim
 runtime! langs/c.vim
