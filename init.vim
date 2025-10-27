@@ -1,17 +1,13 @@
 " ---------------------------
 " Environment Detection
 " ---------------------------
-let g:is_vim = !has('nvim')
+let g:is_vim = has('vim')
 let g:is_neovim = has('nvim')
 let g:is_termux = !empty($PREFIX) && $PREFIX =~# 'termux'
 
-" ---------------------------
-" Plugin Manager
-" ---------------------------
-if empty(glob('~/.vim/autoload/plug.vim'))
-  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+" Load plugins declarations
+if filereadable(expand(~/.config/vim/core/plugins.vim))
+  source ~/.config/vim/core/plugins.vim
 endif
 
 " ---------------------------
@@ -24,9 +20,6 @@ else
   " Set runtime path to include local vim config
   set runtimepath^=~/.config/vim
 endif
-
-" Load plugins declarations
-source ~/.config/vim/core/plugins.vim
 
 " Load core configurations
 runtime! core/settings.vim
