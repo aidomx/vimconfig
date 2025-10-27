@@ -30,28 +30,46 @@ curl -fsSL https://raw.githubusercontent.com/aidomx/vimconfig/main/install.sh | 
 wget -qO- https://raw.githubusercontent.com/aidomx/vimconfig/main/install.sh | bash
 ```
 
-# vcfg Commands
+### vcfg Commands
 
-| Command            | Description                      |
-| ------------------ | -------------------------------- |
-| vcfg install       | First-time installation via vcfg |
-| vcfg update        | Update all plugins               |
-| vcfg system-update | Update configuration system      |
+#### Installation & System Management
 
-| vcfg reinstall Complete fresh reinstall
-| vcfg add <plugin> Add new plugin
-| vcfg remove <plugin> Remove plugin completely
-| vcfg enable <plugin> Enable disabled plugin
-| vcfg disable <plugin> Disable plugin
-| vcfg disable slow_plugins Disable known slow plugins
-| vcfg list List all installed plugins
-| vcfg info <plugin> Show plugin information
-| vcfg search <query> Search plugins on GitHub
-| vcfg clean Remove unused plugins
-| vcfg editmap Interactive mapping editor
-| vcfg doctor System health check
-| vcfg version Show version information
-| vcfg help Show help
+| Command              | Description                      |
+| -------------------- | -------------------------------- |
+| `vcfg install`       | First-time installation via vcfg |
+| `vcfg update`        | Update all plugins               |
+| `vcfg system-update` | Update configuration system      |
+| `vcfg reinstall`     | Complete fresh reinstall         |
+| `vcfg doctor`        | System health check              |
+| `vcfg version`       | Show version information         |
+| `vcfg help`          | Show help                        |
+
+#### Plugin Management
+
+| Command                     | Description                |
+| --------------------------- | -------------------------- |
+| `vcfg add <plugin>`         | Add new plugin             |
+| `vcfg remove <plugin>`      | Remove plugin completely   |
+| `vcfg enable <plugin>`      | Enable disabled plugin     |
+| `vcfg disable <plugin>`     | Disable plugin             |
+| `vcfg disable slow_plugins` | Disable known slow plugins |
+| `vcfg list`                 | List all installed plugins |
+| `vcfg clean`                | Remove unused plugins      |
+
+#### Plugin Discovery
+
+| Command               | Description              |
+| --------------------- | ------------------------ |
+| `vcfg search <query>` | Search plugins on GitHub |
+| `vcfg info <plugin>`  | Show plugin information  |
+
+#### Key Mapping Management
+
+| Command                        | Description                |
+| ------------------------------ | -------------------------- |
+| `vcfg editmap`                 | Interactive mapping editor |
+| `vcfg editmap add <key> <cmd>` | Add new mapping            |
+| `vcfg editmap list`            | List all mappings          |
 
 Examples
 
