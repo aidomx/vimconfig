@@ -193,10 +193,12 @@ wget -qO- https://raw.githubusercontent.com/aidomx/vimconfig/main/install.sh | b
 git clone https://github.com/aidomx/vimconfig.git ~/.local/vim
 ```
 
-### 2. Create Symlink
+### 2. Create or Edit file ~/.vimrc
 
 ```bash
-ln -sf ~/.local/vim/init.vim ~/.vimrc
+if filereadable(expand('~/.config/vim/init.vim'))
+    source ~/.config/vim/init.vim
+endif
 ```
 
 ### 3. Install Vim-Plug
