@@ -190,7 +190,7 @@ wget -qO- https://raw.githubusercontent.com/aidomx/vimconfig/main/install.sh | b
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/aidomx/vimconfig.git ~/.local/vim
+git clone https://github.com/aidomx/vimconfig.git ~/.config/vim
 ```
 
 ### 2. Create or Edit file ~/.vimrc
@@ -354,7 +354,7 @@ Leader is set to `<Space>`
 ## 🏗️ Project Structure
 
 ```
-~/.local/vim/
+~/.config/vim/
 ├── init.vim                 # Main configuration
 ├── core/
 │   ├── settings.vim        # Basic editor settings
