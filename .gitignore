@@ -4,3 +4,6 @@ swaps
 vcfg-dev.sh
 lib/url.sh
 README-dev.md
+*.swp
+*.swo
+coc-settings.json
