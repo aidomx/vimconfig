@@ -6,6 +6,10 @@ set -euo pipefail
 # Load libs (adjust path if script installed elsewhere)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+if command -v /usr/sbin/vcfg 2 > /dev/null &> 1; then
+  SCRIPT_DIR="$HOME/.config/vim"
+fi
+
 # Source libs
 # colors -> logging -> fs/execs -> spinner
 source "${SCRIPT_DIR}/lib/colors.sh"
