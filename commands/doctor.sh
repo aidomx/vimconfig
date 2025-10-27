@@ -59,9 +59,9 @@ vcfg_cmd_doctor() {
 
 print_section() {
   local title=$1
-  echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+  echo -e "${CYAN}$(printf "━%.0s" {1..58})${NC}"
   echo -e "${BOLD}${WHITE}$title${NC}"
-  echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+  echo -e "${CYAN}$(printf "━%.0s" {1..58})${NC}"
   echo ""
 }
 
