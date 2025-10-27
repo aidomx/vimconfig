@@ -16,12 +16,6 @@ source "${SCRIPT_DIR}/lib/fs.sh"
 source "${SCRIPT_DIR}/lib/execs.sh"
 source "${SCRIPT_DIR}/lib/spinner.sh"
 
-# Configuration
-REPO_URL="https://github.com/aidomx/vimconfig.git"
-INSTALL_DIR="${HOME}/.config/vim"
-VIMRC_PATH="${HOME}/.vimrc"
-VCFG_BIN="/usr/bin/vcfg"
-
 # Source command implementations
 for f in "${SCRIPT_DIR}/commands"/*.sh; do
   source "$f"

@@ -1,9 +1,29 @@
 #!/usr/bin/env bash
 
 vcfg_cmd_update() {
-  check_vim_config
+  local plugin_manager=$(detect_plugin_manager)
 
   print_header "Updating Plugins"
+
+  case "$plugin_manager" in
+    "vim-plug")
+      update_vimplug_plugins
+      ;;
+    "packer.nvim")
+      update_packer_plugins
+      ;;
+    "lazy.nvim")
+      update_lazy_plugins
+      ;;
+    *)
+      print_error "Unsupported plugin manager: $plugin_manager"
+      return 1
+      ;;
+  esac
+}
+
+update_vimplug_plugins() {
+  check_vim_config
 
   # Get list of plugins
   local plugins=()
@@ -72,7 +92,7 @@ vcfg_cmd_update() {
   done
 
   # Clear progress line and show results
-  printf "\r%-80s\r" " "                                   
+  printf "\r%-80s\r" " "
   echo ""
   echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
   echo ""
@@ -83,10 +103,32 @@ vcfg_cmd_update() {
 
   if [ $failed -gt 0 ]; then
     print_error "Failed: ${failed} plugin(s)"
-  fi                                                       
+  fi
   if [ $updated -eq 0 ] && [ $failed -eq 0 ]; then
     print_info "All plugins are up to date!"
   fi
 
   print_info "Run 'vim +PlugUpdate' for detailed update information"
+}
+
+update_packer_plugins() {
+  print_info "Updating plugins via packer.nvim..."
+
+  nvim --headless -c 'PackerSync' -c 'qa!' > /dev/null 2>&1 &
+  local pid=$!
+  spinner "$pid" "Updating packer.nvim plugins"
+  wait "$pid" 2> /dev/null || true
+
+  print_success "Packer plugins updated successfully!"
+}
+
+update_lazy_plugins() {
+  print_info "Updating plugins via lazy.nvim..."
+
+  nvim --headless -c 'Lazy update' -c 'qa!' > /dev/null 2>&1 &
+  local pid=$!
+  spinner "$pid" "Updating lazy.nvim plugins"
+  wait "$pid" 2> /dev/null || true
+
+  print_success "Lazy plugins updated successfully!"
 }

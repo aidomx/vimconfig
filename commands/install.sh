@@ -1,5 +1,45 @@
 #!/usr/bin/env bash
 
+vcfg_cmd_install() {
+  # Hanya untuk first-time installation via vcfg command
+  if [ -d "$INSTALL_DIR" ]; then
+    print_error "Vim configuration already installed at: $INSTALL_DIR"
+    echo ""
+    echo -e "It looks like you already have vcfg installed!"
+    echo ""
+    echo -e "If you want to:"
+    echo -e "  ${CYAN}• Update plugins:${NC}        vcfg update"
+    echo -e "  ${CYAN}• Reinstall completely:${NC}  vcfg reinstall"
+    echo -e "  ${CYAN}• Update system:${NC}         vcfg system-update"
+    echo -e "  ${CYAN}• Check system health:${NC}   vcfg doctor"
+    echo ""
+    echo -e "For fresh installation on a new system, use:"
+    echo -e "  ${CYAN}curl -fsSL https://raw.githubusercontent.com/aidomx/vimconfig/main/install.sh | bash${NC}"
+    echo ""
+    return 1
+  fi
+
+  # Jika sampai sini, berarti first-time installation via vcfg command
+  # (jarang terjadi, tapi handle untuk completeness)
+  print_header "First-time Vim Configuration Installation via vcfg"
+
+  # Pre-installation checks
+  check_dependencies
+
+  # Installation steps
+  clone_repository
+  setup_vimrc
+  install_plugin_manager
+  install_plugins
+  install_vcfg
+
+  # Optional setup
+  setup_optional_tools
+
+  # Completion
+  show_next_steps
+}
+
 check_existing_installation() {
   if [ -d "$INSTALL_DIR" ]; then
     echo ""
@@ -162,6 +202,12 @@ show_next_steps() {
   echo -e "${WHITE}Next Steps:${NC}"
   echo ""
   echo -e "  ${YELLOW}vim${NC} (or ${YELLOW}nvim${NC}) - Start with new configuration"
+  echo ""
+  echo -e "${WHITE}Management Commands:${NC}"
+  echo -e "  ${CYAN}vcfg update${NC}        - Update plugins"
+  echo -e "  ${CYAN}vcfg system-update${NC} - Update configuration"
+  echo -e "  ${CYAN}vcfg doctor${NC}        - Check system health"
+  echo -e "  ${CYAN}vcfg help${NC}          - Show all commands"
   echo ""
 
   echo -e "${WHITE}Enjoy coding! 🚀${NC}"

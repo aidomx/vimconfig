@@ -2,3 +2,5 @@ backups
 undo
 swaps
 vcfg-dev.sh
+lib/url.sh
+README-dev.md

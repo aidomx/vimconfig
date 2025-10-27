@@ -1,10 +1,11 @@
 # Vim Configuration for Full-Stack Development
 
-A comprehensive, modular Vim configuration optimized for full-stack web development, C/C++, Python, Go, and mobile development on Termux/HP devices.
+A comprehensive, modular Vim configuration optimized for full-stack web development, C/C++, Python, Go, and mobile development on Termux/HP devices. Comes with **vcfg** - a powerful configuration management tool.
 
 ![Vim IDE](https://img.shields.io/badge/Vim-IDE--like-brightgreen)
 ![Modular](https://img.shields.io/badge/Structure-Modular-blue)
 ![Termux](https://img.shields.io/badge/Optimized-Termux%2FHP-success)
+![vcfg](https://img.shields.io/badge/Tools-vcfg-orange)
 
 ## 🚀 Features
 
@@ -13,6 +14,69 @@ A comprehensive, modular Vim configuration optimized for full-stack web developm
 - **Mobile Optimized**: Termux-friendly key mappings and touch screen support
 - **Full-Stack Ready**: Support for Laravel, Next.js, React, Node.js, and more
 - **Performance**: Lightweight yet powerful configuration
+- **vcfg Tool**: Powerful command-line tool for managing plugins and configuration
+
+## 🛠️ vcfg - Configuration Management Tool
+
+vcfg is a powerful command-line tool for managing your Vim configuration:
+
+### Installation & Setup
+
+```bash
+# Fresh installation (recommended for new users)
+curl -fsSL https://raw.githubusercontent.com/aidomx/vimconfig/main/install.sh | bash
+
+# Or using wget
+wget -qO- https://raw.githubusercontent.com/aidomx/vimconfig/main/install.sh | bash
+```
+
+# vcfg Commands
+
+| Command            | Description                      |
+| ------------------ | -------------------------------- |
+| vcfg install       | First-time installation via vcfg |
+| vcfg update        | Update all plugins               |
+| vcfg system-update | Update configuration system      |
+
+| vcfg reinstall Complete fresh reinstall
+| vcfg add <plugin> Add new plugin
+| vcfg remove <plugin> Remove plugin completely
+| vcfg enable <plugin> Enable disabled plugin
+| vcfg disable <plugin> Disable plugin
+| vcfg disable slow_plugins Disable known slow plugins
+| vcfg list List all installed plugins
+| vcfg info <plugin> Show plugin information
+| vcfg search <query> Search plugins on GitHub
+| vcfg clean Remove unused plugins
+| vcfg editmap Interactive mapping editor
+| vcfg doctor System health check
+| vcfg version Show version information
+| vcfg help Show help
+
+Examples
+
+```bash
+# Plugin management
+vcfg add tpope/vim-fugitive
+vcfg remove coc.nvim
+vcfg disable slow_plugins
+vcfg list
+
+# Search and discovery
+vcfg search fuzzy finder
+vcfg search "syntax highlight"
+vcfg info nerdtree
+
+# System maintenance
+vcfg update
+vcfg doctor
+vcfg clean
+
+# Key mapping management
+vcfg editmap
+vcfg editmap add '<leader>ff' ':Files<CR>'
+vcfg editmap list
+```
 
 ## 📋 Prerequisites
 

@@ -1,5 +1,93 @@
 #!/usr/bin/env bash
 
+detect_plugin_manager() {
+  if [ -f "${HOME}/.vim/autoload/plug.vim" ] || [ -f "${HOME}/.local/share/nvim/site/autoload/plug.vim" ]; then
+    echo "vim-plug"
+  elif [ -d "${HOME}/.local/share/nvim/site/pack/packer/start/packer.nvim" ]; then
+    echo "packer.nvim"
+  elif [ -d "${HOME}/.local/share/nvim/lazy/lazy.nvim" ]; then
+    echo "lazy.nvim"
+  else
+    echo "unknown"
+  fi
+}
+
+get_plugin_config_file() {
+  local manager=$1
+  case "$manager" in
+    "vim-plug")
+      echo "$PLUGINS_FILE"
+      ;;
+    "packer.nvim")
+      echo "${HOME}/.config/nvim/lua/plugins.lua"
+      ;;
+    "lazy.nvim")
+      echo "${HOME}/.config/nvim/lazy.lua"
+      ;;
+    *)
+      echo ""
+      ;;
+  esac
+}
+
+install_with_manager() {
+  local plugin=$1
+  local manager=$2
+
+  print_info "Installing plugin: $plugin"
+
+  case "$manager" in
+    "vim-plug")
+      vim -c 'PlugInstall' -c 'qa!' > /dev/null 2>&1 &
+      local pid=$!
+      spinner "$pid" "Installing $plugin with vim-plug"
+      wait "$pid" 2> /dev/null || true
+      ;;
+
+    "packer.nvim")
+      nvim --headless -c "PackerSync" -c "qa!" > /dev/null 2>&1 &
+      local pid=$!
+      spinner "$pid" "Installing $plugin with packer"
+      wait "$pid" 2> /dev/null || true
+      ;;
+
+    "lazy.nvim")
+      nvim --headless -c "Lazy sync" -c "qa!" > /dev/null 2>&1 &
+      local pid=$!
+      spinner "$pid" "Installing $plugin with lazy"
+      wait "$pid" 2> /dev/null || true
+      ;;
+
+    *)
+      print_warning "Unknown plugin manager, skipping installation"
+      return 1
+      ;;
+  esac
+
+  print_success "Plugin $plugin installation completed"
+}
+
+plugin_exists() {
+  local plugin=$1
+  local config_file=$2
+  local manager=$(detect_plugin_manager)
+
+  case "$manager" in
+    "vim-plug")
+      grep -q "Plug.*${plugin}" "$config_file" 2> /dev/null
+      ;;
+    "packer.nvim")
+      grep -q "use.*${plugin}" "$config_file" 2> /dev/null
+      ;;
+    "lazy.nvim")
+      grep -q "\"${plugin}\"" "$config_file" 2> /dev/null
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
 install_plugin_manager() {
   print_header "Plugin Manager Setup"
 
