@@ -19,6 +19,19 @@ if [[ $IS_REMOTE -eq 1 ]]; then
   # Create temp directory
   temp_dir=$(mktemp -d)
 
+  # Auto-handle existing installation for remote
+  if [[ -f "$HOME/.vimrc" ]] || [[ -d "$HOME/.vim/plugged" ]] || [[ -d "$HOME/.config/vim" ]]; then
+    echo "Existing installation found. Creating backup..."
+    local backup_dir="$HOME/.vimbackup_$(date +%Y%m%d_%H%M%S)"
+    mkdir -p "$backup_dir"
+
+    [[ -f "$HOME/.vimrc" ]] && mv "$HOME/.vimrc" "$backup_dir/"
+    [[ -d "$HOME/.vim" ]] && mv "$HOME/.vim" "$backup_dir/" 2> /dev/null || true
+    [[ -d "$HOME/.config/vim" ]] && mv "$HOME/.config/vim" "$backup_dir/" 2> /dev/null || true
+
+    echo "Backup created: $backup_dir"
+  fi
+
   # Download the entire repo
   echo "Cloning repository to temporary directory..."
   if ! git clone -q https://github.com/aidomx/vimconfig.git "$temp_dir"; then
@@ -56,7 +69,11 @@ main() {
 
   # Pre-installation checks
   check_dependencies
-  check_existing_installation
+
+  # For remote execution, backup already handled
+  if [[ $IS_REMOTE -eq 0 ]]; then
+    check_existing_installation
+  fi
 
   # Installation steps
   clone_repository
