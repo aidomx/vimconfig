@@ -53,7 +53,7 @@ vcfg_cmd_remove() {
   fi
 
   # Clean unused plugins
-  clean_plugins "$plugin_manager"
+  vcfg_cmd_clean "$plugin_manager"
 
   # Remove backup if successful
   rm -f "$backup_file"
