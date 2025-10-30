@@ -10,6 +10,7 @@ REPO_URL="https://github.com/aidomx/vimconfig.git"
 INSTALL_DIR="${VIM_CONFIG_DIR}"
 VIMRC_PATH="${HOME}/.vimrc"
 VCFG_BIN="/usr/bin/vcfg"
+TERMUX_VERSION="0.119.0-beta.3"
 
 check_vim_config() {
   if [ ! -d "$VIM_CONFIG_DIR" ]; then
@@ -21,4 +22,25 @@ check_vim_config() {
     return 1
   fi
   return 0
+}
+
+check_text_editor() {
+  if command -v vim &> /dev/null; then
+    echo "vim"
+    return 0
+  elif command -v nvim &> /dev/null; then
+    echo "nvim"
+    return 0
+  else
+    print_error "No text editor found (Vim or Neovim)"
+    return 1
+  fi
+}
+
+get_editor_installed() {
+  local editor=$(check_text_editor)
+  if [ $? -ne 0 ]; then
+    return 1
+  fi
+  echo "$editor"
 }
