@@ -22,7 +22,7 @@ if [[ $IS_REMOTE -eq 1 ]]; then
   # Auto-handle existing installation for remote
   if [[ -f "$HOME/.vimrc" ]] || [[ -d "$HOME/.vim/plugged" ]] || [[ -d "$HOME/.config/vim" ]]; then
     echo "Existing installation found. Creating backup..."
-    local backup_dir="$HOME/.vimbackup_$(date +%Y%m%d_%H%M%S)"
+    backup_dir="$HOME/.vimbackup_$(date +%Y%m%d_%H%M%S)"
     mkdir -p "$backup_dir"
 
     [[ -f "$HOME/.vimrc" ]] && mv "$HOME/.vimrc" "$backup_dir/"
