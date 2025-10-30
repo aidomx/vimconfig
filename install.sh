@@ -79,6 +79,7 @@ main() {
   clone_repository
   setup_vimrc
   install_plugin_manager
+  install_fzf_if_needed
   install_plugins
   install_vcfg
 
