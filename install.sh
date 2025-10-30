@@ -17,7 +17,6 @@ if [[ $IS_REMOTE -eq 1 ]]; then
   echo "Remote execution detected. Downloading dependencies..."
 
   # Create temp directory
-  local temp_dir
   temp_dir=$(mktemp -d)
 
   # Download the entire repo
