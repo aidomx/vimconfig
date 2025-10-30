@@ -42,15 +42,6 @@ if [[ $IS_REMOTE -eq 1 ]]; then
   # Change to the temp directory and re-execute the script locally
   cd "$temp_dir"
   exec bash "./install.sh"
-
-  if [[ ! -d "$HOME/.fzf" ]]; then
-    print_info "Installing fzf..."
-    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-    ~/.fzf/install --all --no-bash --no-zsh --no-fish
-    print_success "fzf installed"
-  else
-    print_info "fzf already installed"
-  fi
 fi
 
 # Load libs (adjust path if script installed elsewhere)
@@ -88,6 +79,15 @@ main() {
   clone_repository
   setup_vimrc
   install_plugin_manager
+  if [[ ! -d "$HOME/.fzf" ]]; then
+    print_info "Installing fzf..."
+    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+    ~/.fzf/install --all --no-bash --no-zsh --no-fish
+    print_success "fzf installed"
+  else
+    print_info "fzf already installed"
+  fi
+
   install_plugins
   install_vcfg
 
