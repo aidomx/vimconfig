@@ -12,26 +12,6 @@ else
   IS_REMOTE=0
 fi
 
-# For remote execution, download dependencies first
-if [[ $IS_REMOTE -eq 1 ]]; then
-  remote_dependencies
-fi
-
-# Load libs (adjust path if script installed elsewhere)
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-# Source libs
-source "${SCRIPT_DIR}/lib/colors.sh"
-source "${SCRIPT_DIR}/lib/logging.sh"
-source "${SCRIPT_DIR}/lib/fs.sh"
-source "${SCRIPT_DIR}/lib/execs.sh"
-source "${SCRIPT_DIR}/lib/spinner.sh"
-
-# Source command implementations
-for f in "${SCRIPT_DIR}/commands"/*.sh; do
-  source "$f"
-done
-
 # ============================================
 # Remote Dependencies Function
 # ============================================
@@ -56,6 +36,26 @@ remote_dependencies() {
 
   # Cleanup will happen after script execution
 }
+
+# For remote execution, download dependencies first
+if [[ $IS_REMOTE -eq 1 ]]; then
+  remote_dependencies
+fi
+
+# Load libs (adjust path if script installed elsewhere)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Source libs
+source "${SCRIPT_DIR}/lib/colors.sh"
+source "${SCRIPT_DIR}/lib/logging.sh"
+source "${SCRIPT_DIR}/lib/fs.sh"
+source "${SCRIPT_DIR}/lib/execs.sh"
+source "${SCRIPT_DIR}/lib/spinner.sh"
+
+# Source command implementations
+for f in "${SCRIPT_DIR}/commands"/*.sh; do
+  source "$f"
+done
 
 # ============================================
 # Main Installation Flow
