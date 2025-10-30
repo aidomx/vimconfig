@@ -12,11 +12,8 @@ else
   IS_REMOTE=0
 fi
 
-# ============================================
-# Remote Dependencies Function
-# ============================================
-
-remote_dependencies() {
+# For remote execution, download dependencies first
+if [[ $IS_REMOTE -eq 1 ]]; then
   echo "Remote execution detected. Downloading dependencies..."
 
   # Create temp directory
@@ -33,13 +30,6 @@ remote_dependencies() {
   # Change to the temp directory and re-execute the script locally
   cd "$temp_dir"
   exec bash "./install.sh"
-
-  # Cleanup will happen after script execution
-}
-
-# For remote execution, download dependencies first
-if [[ $IS_REMOTE -eq 1 ]]; then
-  remote_dependencies
 fi
 
 # Load libs (adjust path if script installed elsewhere)
