@@ -6,9 +6,7 @@ let g:is_neovim = has('nvim')
 let g:is_termux = !empty($PREFIX) && $PREFIX =~# 'termux'
 
 " Load plugins declarations
-if filereadable(expand(~/.config/vim/core/plugins.vim))
-  source ~/.config/vim/core/plugins.vim
-endif
+source ~/.config/vim/core/plugins.vim
 
 " ---------------------------
 " Main Configuration
