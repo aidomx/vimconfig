@@ -91,6 +91,23 @@ plugin_exists() {
 install_plugin_manager() {
   print_header "Plugin Manager Setup"
 
+  # Deteksi environment
+  local is_neovim=0
+  local is_vim=0
+  local is_termux=0
+  
+  if command -v nvim &> /dev/null; then
+    is_neovim=1
+  fi
+  
+  if command -v vim &> /dev/null; then
+    is_vim=1
+  fi
+  
+  if [ -n "$TERMUX_VERSION" ]; then
+    is_termux=1
+  fi
+
   # Deteksi plugin manager yang sudah terinstall
   local existing_managers=()
 
@@ -126,22 +143,22 @@ install_plugin_manager() {
 
   case $choice in
     1)
-      install_vim_plug
+      install_vim_plug "$is_neovim" "$is_vim" "$is_termux"
       ;;
     2)
-      if [ "$g:is_neovim" = "1" ]; then
+      if [ "$is_neovim" = "1" ]; then
         install_packer
       else
         print_error "Packer.nvim requires Neovim"
-        install_vim_plug
+        install_vim_plug "$is_neovim" "$is_vim" "$is_termux"
       fi
       ;;
     3)
-      if [ "$g:is_neovim" = "1" ]; then
+      if [ "$is_neovim" = "1" ]; then
         install_lazy_nvim
       else
         print_error "Lazy.nvim requires Neovim"
-        install_vim_plug
+        install_vim_plug "$is_neovim" "$is_vim" "$is_termux"
       fi
       ;;
     4)
@@ -150,19 +167,23 @@ install_plugin_manager() {
       ;;
     *)
       print_warning "Invalid choice, using vim-plug"
-      install_vim_plug
+      install_vim_plug "$is_neovim" "$is_vim" "$is_termux"
       ;;
   esac
 }
 
 install_vim_plug() {
+  local is_neovim=$1
+  local is_vim=$2
+  local is_termux=$3
+  
   print_info "Installing vim-plug..."
 
   local plug_vim_path="${HOME}/.vim/autoload/plug.vim"
   local plug_nvim_path="${HOME}/.local/share/nvim/site/autoload/plug.vim"
 
   # Install untuk Vim
-  if [ "$g:is_vim" = "1" ] || [ "$g:is_termux" = "1" ]; then
+  if [ "$is_vim" = "1" ] || [ "$is_termux" = "1" ]; then
     if [ ! -f "$plug_vim_path" ]; then
       curl -fLo "$plug_vim_path" --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -173,7 +194,7 @@ install_vim_plug() {
   fi
 
   # Install untuk Neovim
-  if [ "$g:is_neovim" = "1" ]; then
+  if [ "$is_neovim" = "1" ]; then
     if [ ! -f "$plug_nvim_path" ]; then
       curl -fLo "$plug_nvim_path" --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
