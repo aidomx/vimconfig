@@ -2,6 +2,8 @@
 
 vcfg is a powerful command-line tool for managing your Vim configuration, plugins, and key mappings.
 
+> **Note:** Certain commands are currently under development and may not be functional.
+
 ## 📚 Table of Contents
 
 - [Installation](#installation)
@@ -17,8 +19,8 @@ vcfg is automatically installed with the main configuration. To install manually
 
 ```bash
 # Copy to system PATH
-sudo cp ~/.local/vim/bin/vcfg /usr/local/bin/
-sudo chmod +x /usr/local/bin/vcfg
+sudo cp ~/.config/vim/vcfg.sh /usr/sbin/vcfg
+sudo chmod +x /usr/sbin/vcfg
 ```
 
 ## 📖 Command Reference
@@ -106,7 +108,7 @@ vcfg disable slow_plugins
 # List all installed plugins
 vcfg list
 
-# List with status (enabled/disabled)
+# List with status (enabled/disabled) (not ready)
 vcfg list --status
 ```
 
@@ -238,7 +240,7 @@ vcfg editmap list --filter leader
 vcfg manages these configuration files:
 
 ```
-~/.local/vim/
+~/.config/vim/
 ├── core/
 │   ├── plugins.vim      # Plugin declarations
 │   └── mappings.vim     # Key mappings
@@ -246,7 +248,7 @@ vcfg manages these configuration files:
 └── utils/               # Utility configs
 ```
 
-### Custom Plugin Sources
+### Custom Plugin Sources (not ready)
 
 ```bash
 # Add plugin from custom source
@@ -256,7 +258,7 @@ vcfg add https://github.com/username/custom-plugin.git
 vcfg add ~/projects/my-vim-plugin --local
 ```
 
-### Backup and Restore
+### Backup and Restore (not ready)
 
 ```bash
 # Backup current configuration
@@ -269,7 +271,7 @@ vcfg restore ~/vim-backup.tar.gz
 vcfg backup list
 ```
 
-### Plugin Profiles
+### Plugin Profiles (not ready)
 
 ```bash
 # Create plugin profile
@@ -290,7 +292,7 @@ vcfg profile list
 
 ```bash
 # Add to PATH
-echo 'export PATH="$HOME/.local/vim/bin:$PATH"' >> ~/.bashrc
+echo 'export PATH="$HOME/.config/vim:$PATH"' >> ~/.bashrc
 source ~/.bashrc
 ```
 
@@ -298,7 +300,7 @@ source ~/.bashrc
 
 ```bash
 # Fix permissions
-chmod +x ~/.local/vim/bin/vcfg
+chmod +x ~/.config/vim/vcfg.sh
 ```
 
 #### Plugin installation fails
@@ -367,7 +369,7 @@ vcfg --manager lazy add tpope/vim-fugitive
 
 ## 📝 Configuration
 
-vcfg can be configured via `~/.config/vcfg/config.yaml`:
+vcfg can be configured via `~/.config/vim/config.yaml`:
 
 ```yaml
 # Default plugin manager
