@@ -7,3 +7,5 @@ README-dev.md
 *.swp
 *.swo
 coc-settings.json
+*.backup
+1
