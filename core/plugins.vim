@@ -10,7 +10,7 @@ Plug 'vim-airline/vim-airline'
 " Plug 'vim-airline/vim-airline-themes'
 
 " Completion / LSP / IDE-like
-Plug 'neoclide/coc.nvim', { 'branch': 'release' }
+" Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 " Plug 'github/copilot.vim'
 
 " Tools
@@ -22,13 +22,13 @@ Plug 'junegunn/fzf.vim'
 " Web Development
 " Plug 'pangloss/vim-javascript'
 " Plug 'leafgarland/typescript-vim'
-Plug 'maxmellon/vim-jsx-pretty'
+" Plug 'maxmellon/vim-jsx-pretty'
 Plug 'othree/html5.vim'
-Plug 'prisma/vim-prisma'
+" Plug 'prisma/vim-prisma'
 
 " PHP/Laravel
 " Plug 'phpactor/phpactor', {'for': 'php', 'tag': '*', 'do': 'composer install --no-dev -o'}
-Plug 'jwalton512/vim-blade'
+" Plug 'jwalton512/vim-blade'
 
 " C/C++ Development
 " Plug 'bfrg/vim-cpp-modern'
@@ -36,7 +36,7 @@ Plug 'jwalton512/vim-blade'
 Plug 'dense-analysis/ale'
 
 " Python
-Plug 'vim-python/python-syntax'
+" Plug 'vim-python/python-syntax'
 
 " Tree / navigation / formatting
 Plug 'preservim/nerdtree'

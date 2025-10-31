@@ -55,3 +55,43 @@ clean_lazy_plugins() {
 
   print_success "Lazy cleanup completed!"
 }
+
+cleanup_plugins() {
+  if [[ $IS_REMOTE -eq 0 ]]; then
+    # Hanya tanya konfirmasi jika bukan remote execution
+    read -p "Clean existing plugins for fresh installation? [y/N] " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+      print_info "Skipping plugin cleanup"
+      return
+    fi
+  fi
+
+  print_info "Cleaning up existing plugins for fresh installation..."
+
+  # Clean vim-plug
+  if [ -d "${HOME}/.vim/plugged" ]; then
+    rm -rf "${HOME}/.vim/plugged"
+    print_success "Cleaned vim-plug plugins"
+  fi
+
+  # Clean packer.nvim
+  if [ -d "${HOME}/.local/share/nvim/site/pack/packer" ]; then
+    rm -rf "${HOME}/.local/share/nvim/site/pack/packer"
+    print_success "Cleaned packer.nvim plugins"
+  fi
+
+  # Clean lazy.nvim
+  if [ -d "${HOME}/.local/share/nvim/lazy" ]; then
+    rm -rf "${HOME}/.local/share/nvim/lazy"
+    print_success "Cleaned lazy.nvim plugins"
+  fi
+
+  # Clean coc.nvim cache
+  if [ -d "${HOME}/.config/coc" ]; then
+    rm -rf "${HOME}/.config/coc"
+    print_success "Cleaned coc.nvim cache"
+  fi
+
+  echo ""
+}

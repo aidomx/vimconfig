@@ -52,7 +52,7 @@ source "${SCRIPT_DIR}/lib/colors.sh"
 source "${SCRIPT_DIR}/lib/logging.sh"
 source "${SCRIPT_DIR}/lib/fs.sh"
 source "${SCRIPT_DIR}/lib/execs.sh"
-source "${SCRIPT_DIR}/lib/spinner.sh"
+source "${SCRIPT_DIR}/lib/progress.sh"
 
 # Source command implementations
 for f in "${SCRIPT_DIR}/commands"/*.sh; do
@@ -79,15 +79,6 @@ main() {
   clone_repository
   setup_vimrc
   install_plugin_manager
-  if [[ ! -d "$HOME/.fzf" ]]; then
-    print_info "Installing fzf..."
-    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-    ~/.fzf/install --all --no-bash --no-zsh --no-fish
-    print_success "fzf installed"
-  else
-    print_info "fzf already installed"
-  fi
-
   install_plugins
   install_vcfg
 

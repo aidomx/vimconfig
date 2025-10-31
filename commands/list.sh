@@ -41,7 +41,16 @@ list_vimplug_plugins() {
         local plugin_name="${plugin##*/}"
         local install_status=""
 
-        if [ -d "${plugins_dir}/${plugin_name}" ]; then
+        # Special case for fzf (installed in custom directory)
+        if [[ "$plugin_name" == "fzf" ]]; then
+          if command -v fzf 2 > /dev/null &> 1; then
+            install_status=" ${CYAN}[installed]${NC}"
+            count_installed=$((count_installed + 1))
+          else
+            install_status=" ${RED}[not installed]${NC}"
+          fi
+        # Standard plugin check
+        elif [ -d "${plugins_dir}/${plugin_name}" ]; then
           install_status=" ${CYAN}[installed]${NC}"
           count_installed=$((count_installed + 1))
         else
