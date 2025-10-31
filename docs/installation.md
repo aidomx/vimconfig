@@ -34,7 +34,7 @@ First, ensure you have the required packages installed. See [Prerequisites Guide
 ### 2. Clone Repository
 
 ```bash
-git clone https://github.com/aidomx/vimconfig.git ~/.local/vim
+git clone https://github.com/aidomx/vimconfig.git ~/.config/vim
 ```
 
 ### 3. Create or Edit ~/.vimrc
@@ -42,15 +42,15 @@ git clone https://github.com/aidomx/vimconfig.git ~/.local/vim
 Add these lines to your `~/.vimrc`:
 
 ```vim
-if filereadable(expand('~/.local/vim/init.vim'))
-    source ~/.local/vim/init.vim
+if filereadable(expand('~/.config/vim/init.vim'))
+    source ~/.config/vim/init.vim
 endif
 ```
 
 Or create a symlink:
 
 ```bash
-ln -sf ~/.local/vim/init.vim ~/.vimrc
+ln -sf ~/.config/vim/init.vim ~/.vimrc
 ```
 
 ### 4. Install Vim-Plug
@@ -94,8 +94,8 @@ The vcfg tool provides easy configuration management:
 
 ```bash
 # Copy vcfg to your PATH
-sudo cp ~/.local/vim/bin/vcfg /usr/local/bin/
-sudo chmod +x /usr/local/bin/vcfg
+sudo cp ~/.config/vim/bin/vcfg /usr/local/bin/
+sudo chmod +x /usr.config/bin/vcfg
 ```
 
 ## 🔄 Updating
@@ -125,7 +125,7 @@ vcfg system-update
 Or manually:
 
 ```bash
-cd ~/.local/vim
+cd ~/.config/vim
 git pull origin main
 ```
 
@@ -135,14 +135,14 @@ To completely remove the configuration:
 
 ```bash
 # Remove configuration directory
-rm -rf ~/.local/vim
+rm -rf ~/.config/vim
 
 # Remove vim-plug
 rm -rf ~/.vim/autoload/plug.vim
 rm -rf ~/.vim/plugged
 
 # Remove vcfg tool (if installed)
-sudo rm /usr/local/bin/vcfg
+sudo rm /usr.config/bin/vcfg
 
 # Remove or edit ~/.vimrc
 # Comment out or remove the lines that source the configuration
@@ -156,7 +156,7 @@ If you get permission errors:
 
 ```bash
 # Make sure you have write permissions
-chmod -R u+w ~/.local/vim
+chmod -R u+w ~/.config/vim
 chmod -R u+w ~/.vim
 ```
 
