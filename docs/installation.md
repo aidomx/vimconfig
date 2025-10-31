@@ -94,8 +94,8 @@ The vcfg tool provides easy configuration management:
 
 ```bash
 # Copy vcfg to your PATH
-sudo cp ~/.config/vim/bin/vcfg /usr/local/bin/
-sudo chmod +x /usr.config/bin/vcfg
+sudo cp ~/.config/vim/vcfg.sh /usr/sbin/vcfg
+sudo chmod +x /usr/sbin/vcfg
 ```
 
 ## 🔄 Updating
