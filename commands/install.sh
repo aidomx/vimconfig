@@ -151,7 +151,7 @@ install_vcfg() {
   fi
 
   # Verify installation
-  if command -v vcfg &> /dev/null; then
+  if command -v vcfg > /dev/null 2>&1; then
     print_success "vcfg installed successfully"
     vcfg --version
   else

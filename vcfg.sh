@@ -3,12 +3,12 @@
 # Set strict-ish mode
 set -euo pipefail
 
-DEV_MODE=1
+DEV_MODE="${VCFG_DEV_MODE:-0}"
 
 # Load libs (adjust path if script installed elsewhere)
-export VCFG_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+VCFG_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-if [ $DEV_MODE -eq 0 ] && command -v /usr/sbin/vcfg 2 > /dev/null &> 1; then
+if [ $DEV_MODE -eq 0 ] && command -v vcfg > /dev/null 2>&1; then
   VCFG_ROOT="$HOME/.config/vim"
 fi
 
@@ -25,7 +25,7 @@ for f in "${VCFG_ROOT}/commands"/*.sh; do
   source "$f"
 done
 
-VCFG_VERSION="1.0.0"
+export VCFG_VERSION="1.0.0"
 
 main() {
   if [ $# -eq 0 ]; then
