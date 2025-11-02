@@ -3,26 +3,25 @@
 # Set strict-ish mode
 set -euo pipefail
 
-# Gunakan environment variable, default ke production
-DEV_MODE="${VCFG_DEV_MODE:-0}"
+DEV_MODE=1
 
 # Load libs (adjust path if script installed elsewhere)
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+VCFG_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Jika production mode dan vcfg sudah terinstall, gunakan install directory
-if [ $DEV_MODE -eq 0 ] && command -v vcfg > /dev/null 2>&1; then
-  SCRIPT_DIR="$HOME/.config/vim"
+if [ $DEV_MODE -eq 0 ] && command -v /usr/sbin/vcfg 2 > /dev/null &> 1; then
+  VCFG_ROOT="$HOME/.config/vim"
 fi
 
 # Source libs
-source "${SCRIPT_DIR}/lib/colors.sh"
-source "${SCRIPT_DIR}/lib/logging.sh"
-source "${SCRIPT_DIR}/lib/fs.sh"
-source "${SCRIPT_DIR}/lib/execs.sh"
-source "${SCRIPT_DIR}/lib/progress.sh"
+source "${VCFG_ROOT}/lib/paths.sh"
+source "${VCFG_ROOT}/lib/fs.sh"
+source "${VCFG_ROOT}/lib/colors.sh"
+source "${VCFG_ROOT}/lib/logging.sh"
+source "${VCFG_ROOT}/lib/execs.sh"
+source "${VCFG_ROOT}/lib/progress.sh"
 
 # Source command implementations
-for f in "${SCRIPT_DIR}/commands"/*.sh; do
+for f in "${VCFG_ROOT}/commands"/*.sh; do
   source "$f"
 done
 
@@ -39,17 +38,22 @@ main() {
 
   case "${cmd}" in
     add) vcfg_cmd_add "$@" ;;
+    backup) vcfg_cmd_backup "$@" ;;
+    restore) vcfg_cmd_restore "$@" ;;
     remove | rm) vcfg_cmd_remove "$@" ;;
     enable) vcfg_cmd_enable "$@" ;;
     disable) vcfg_cmd_disable "$@" ;;
     doctor) vcfg_cmd_doctor "$@" ;;
     install) vcfg_cmd_install "$@" ;;
     list | ls) vcfg_cmd_list "$@" ;;
+    set) vcfg_cmd_set "$@" ;;
+    reset) vcfg_cmd_reset "$@" ;;
     search) vcfg_cmd_search "$@" ;;
     update) vcfg_cmd_update "$@" ;;
     system-update) vcfg_cmd_system_update "$@" ;;
     reinstall) vcfg_cmd_reinstall "$@" ;;
     clean) vcfg_cmd_clean "$@" ;;
+    coc) vcfg_cmd_coc "$@" ;;
     info) vcfg_cmd_info "$@" ;;
     editmap) vcfg_cmd_editmap "$@" ;;
     --version | -v) vcfg_cmd_version "$VCFG_VERSION" ;;

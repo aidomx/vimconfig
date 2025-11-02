@@ -28,7 +28,7 @@ clean_vimplug_plugins() {
 
   vim -c 'PlugClean!' -c 'qa!' > /dev/null 2>&1 &
   local vim_pid=$!
-  spinner $vim_pid "Cleaning vim-plug plugins"
+  show_percentage_progress $vim_pid "Cleaning vim-plug plugins"
   wait $vim_pid
 
   print_success "Cleanup completed!"

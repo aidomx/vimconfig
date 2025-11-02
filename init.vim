@@ -20,6 +20,7 @@ else
 endif
 
 " Load core configurations
+runtime! core/coc.vim
 runtime! core/settings.vim
 runtime! core/fonts.vim
 runtime! utils/ui.vim

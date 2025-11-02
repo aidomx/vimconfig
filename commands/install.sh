@@ -100,7 +100,7 @@ install_plugins() {
     nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync' > /dev/null 2>&1 &
     local nvim_pid=$!
 
-    show_percentage_progress $nvim_pid "packer.nvim plugins"
+    show_percentage_progress $nvim_pid "Installing packer.nvim plugins"
     wait $nvim_pid
     print_success "Plugins installed via packer.nvim"
 
@@ -111,7 +111,7 @@ install_plugins() {
     nvim --headless -c 'Lazy sync' -c 'qa!' > /dev/null 2>&1 &
     local lazy_pid=$!
 
-    show_percentage_progress $lazy_pid "lazy.nvim plugins"
+    show_percentage_progress $lazy_pid "Installing lazy.nvim plugins"
     wait $lazy_pid
     print_success "Plugins installed via lazy.nvim"
 

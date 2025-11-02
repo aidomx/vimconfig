@@ -1,10 +1,22 @@
 #!/usr/bin/env bash
 
+# Load add modules
+for add_file in "${VCFG_ROOT}/commands/add"/*.sh; do
+  source "$add_file"
+done
+
 vcfg_cmd_add() {
   local plugin=$1
+  local option=${2:-}
+
   if [ -z "$plugin" ]; then
     print_error "Please specify a plugin to add"
-    echo "Usage: vcfg add <username/repository>"
+    echo "Usage: vcfg add <plugin> [--local]"
+    echo ""
+    echo "Examples:"
+    echo "  vcfg add tpope/vim-fugitive           # GitHub shorthand"
+    echo "  vcfg add https://github.com/user/repo.git  # Full Git URL"
+    echo "  vcfg add ~/projects/my-plugin --local # Local plugin"
     return 1
   fi
 
@@ -17,61 +29,39 @@ vcfg_cmd_add() {
     return 1
   fi
 
+  # Detect plugin type
+  local plugin_type=$(detect_plugin_type "$plugin" "$option")
+  local normalized_plugin=$(normalize_plugin_name "$plugin" "$plugin_type")
+
+  # Validate plugin source
+  if ! validate_plugin_source "$normalized_plugin" "$plugin_type"; then
+    return 1
+  fi
+
   # Check if plugin exists
-  if plugin_exists "$plugin" "$config_file"; then
-    print_warning "Plugin '${plugin}' already exists in configuration"
+  if plugin_exists "$normalized_plugin" "$config_file"; then
+    print_warning "Plugin already exists in configuration"
     return 0
   fi
 
-  print_info "Adding plugin '${CYAN}${plugin}${NC}' to ${plugin_manager}"
+  show_plugin_info "$normalized_plugin" "$plugin_type" "$plugin_manager"
 
-  # Add plugin based on manager
-  case "$plugin_manager" in
-    "vim-plug")
-      add_to_vimplug "$plugin" "$config_file"
-      ;;
-    "packer.nvim")
-      add_to_packer "$plugin" "$config_file"
-      ;;
-    "lazy.nvim")
-      add_to_lazy "$plugin" "$config_file"
-      ;;
-    *)
-      print_error "Unsupported plugin manager: $plugin_manager"
-      return 1
-      ;;
-  esac
+  # Add plugin to config with progress
+  (add_plugin_to_config "$normalized_plugin" "$plugin_type" "$plugin_manager" "$config_file") > /dev/null 2>&1 &
+  local pid=$!
+  show_percentage_progress $pid "Adding plugin to configuration"
+  wait $pid
 
-  # Install the plugin
-  install_with_manager "$plugin" "$plugin_manager"
-}
+  if [ $? -eq 0 ]; then
+    # Install the plugin
+    # print_info "Installing plugin..."
+    install_with_manager "$normalized_plugin" "$plugin_manager"
 
-add_to_vimplug() {
-  local plugin=$1
-  local config_file=$2
-  sed -i "/call plug#end()/i Plug '${plugin}'" "$config_file" || {
-    print_error "Failed to modify $config_file"
+    print_success "Plugin added successfully!"
+    echo ""
+    echo -e "Run ${CYAN}vcfg list${NC} to see all plugins"
+  else
+    print_error "Failed to add plugin"
     return 1
-  }
-  print_success "Plugin added to vim-plug configuration"
-}
-
-add_to_packer() {
-  local plugin=$1
-  local config_file=$2
-  sed -i "/end)/i \ \ use '${plugin}'" "$config_file" || {
-    print_error "Failed to modify packer config"
-    return 1
-  }
-  print_success "Plugin added to packer.nvim configuration"
-}
-
-add_to_lazy() {
-  local plugin=$1
-  local config_file=$2
-  sed -i "/^}$/i \ \ { \"${plugin}\" }," "$config_file" || {
-    print_error "Failed to modify lazy config"
-    return 1
-  }
-  print_success "Plugin added to lazy.nvim configuration"
+  fi
 }

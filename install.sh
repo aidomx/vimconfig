@@ -45,17 +45,18 @@ if [[ $IS_REMOTE -eq 1 ]]; then
 fi
 
 # Load libs (adjust path if script installed elsewhere)
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+VCFG_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Source libs
-source "${SCRIPT_DIR}/lib/colors.sh"
-source "${SCRIPT_DIR}/lib/logging.sh"
-source "${SCRIPT_DIR}/lib/fs.sh"
-source "${SCRIPT_DIR}/lib/execs.sh"
-source "${SCRIPT_DIR}/lib/progress.sh"
+source "${VCFG_ROOT}/lib/paths.sh"
+source "${VCFG_ROOT}/lib/fs.sh"
+source "${VCFG_ROOT}/lib/colors.sh"
+source "${VCFG_ROOT}/lib/logging.sh"
+source "${VCFG_ROOT}/lib/execs.sh"
+source "${VCFG_ROOT}/lib/progress.sh"
 
 # Source command implementations
-for f in "${SCRIPT_DIR}/commands"/*.sh; do
+for f in "${VCFG_ROOT}/commands"/*.sh; do
   source "$f"
 done
 

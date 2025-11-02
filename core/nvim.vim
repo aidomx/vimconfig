@@ -14,7 +14,7 @@ command! Term :split | terminal
 command! VTerm :vsplit | terminal
 
 " Native LSP setup (optional)
-if filereadable(expand('~/.local/vim/core/nvim-lsp.vim'))
+if filereadable(expand('~/.config/vim/core/nvim-lsp.vim'))
   runtime! core/nvim-lsp.vim
 endif
 

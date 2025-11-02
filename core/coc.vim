@@ -1,14 +1,11 @@
-" CoC Configuration
+" ========================
+" Coc.nvim Configuration
+" ========================
+
+" Global extensions - add your extensions here
 let g:coc_global_extensions = [
-  "\ 'coc-json',
-  \ 'coc-clangd',
-  \ 'coc-tsserver',
-  "\ 'coc-java',
-  "\ 'coc-kotlin',
-  \ 'coc-git',
-  "\ 'coc-emmet',
-  "\ 'coc-prettier',
-  "\ 'coc-eslint',
-  "\ 'coc-pyright',
-  "\ 'coc-sh',
-  \ ]
+ \
+]
+
+" Coc settings
+" Use `:CocConfig` to customize Coc settings

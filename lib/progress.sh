@@ -11,12 +11,12 @@ show_percentage_progress() {
     if [[ $percent -gt 100 ]]; then
       percent=100
     fi
-    echo -ne "\r${CYAN}[PROGRESS]${NC} Installing $message: ${percent}%"
+    echo -ne "\r${CYAN}[PROGRESS]${NC} $message: ${percent}%"
     sleep 1
     duration=$((duration + 1))
   done
 
-  echo -ne "\r${CYAN}[PROGRESS]${NC} Installing $message: 100%"
+  echo -ne "\r${CYAN}[PROGRESS]${NC} $message: 100%"
   echo ""
 }
 

@@ -1,11 +1,19 @@
 #!/usr/bin/env bash
 
-EDITOR=vim
-VIM_CONFIG_DIR="${HOME}/.config/vim"
-PLUGINS_FILE="${VIM_CONFIG_DIR}/core/plugins.vim"
-VIM_PLUGINS_DIR="${HOME}/.vim/plugged"
+# Load paths first to ensure consistency
+if [ -f "$(dirname "${BASH_SOURCE[0]}")/paths.sh" ]; then
+  source "$(dirname "${BASH_SOURCE[0]}")/paths.sh"
+fi
 
-# Configuration
+# Editor configuration
+EDITOR=vim
+
+# These will be set by paths.sh, but provide defaults for backward compatibility
+: ${VIM_CONFIG_DIR:="${HOME}/.config/vim"}
+: ${PLUGINS_FILE:="${VIM_CONFIG_DIR}/core/plugins.vim"}
+: ${VIM_PLUGINS_DIR:="${HOME}/.vim/plugged"}
+
+# Other configuration (unchanged)
 REPO_URL="https://github.com/aidomx/vimconfig.git"
 INSTALL_DIR="${VIM_CONFIG_DIR}"
 VIMRC_PATH="${HOME}/.vimrc"

@@ -1,68 +1,65 @@
 #!/usr/bin/env bash
 
-backup_existing() {
-  local backup_dir="${INSTALL_DIR}.backup.$(date +%Y%m%d_%H%M%S)"
+# Load backup modules
+for backup_file in "${VCFG_ROOT}/commands/backup"/*.sh; do
+  source "$backup_file"
+done
 
-  print_info "Creating backup at: $backup_dir"
+vcfg_cmd_backup() {
+  local output_file="${1:-${HOME}/.vim-backup-$(date +%Y%m%d_%H%M%S).tar.gz}"
+  local output_dir=$(dirname "$output_file")
+  mkdir -p "$output_dir"
 
-  # Backup config directory
-  if [ -d "$INSTALL_DIR" ]; then
-    mv "$INSTALL_DIR" "$backup_dir"
-    print_success "Backed up config directory"
+  show_backup_summary "$output_file"
+
+  # Create backup with progress
+  (create_backup_archive "$output_file") > /dev/null 2>&1 &
+  local pid=$!
+  show_percentage_progress $pid "Creating backup archive"
+  wait $pid
+
+  if [ -f "$output_file" ] && validate_backup_file "$output_file"; then
+    show_backup_success "$output_file"
   else
-    print_warning "Config directory not found: $INSTALL_DIR"
+    print_error "Backup creation failed!"
+    return 1
   fi
-
-  # Cek jika .vimrc adalah milik kita (meng-source config kita)
-  if [ -f "$VIMRC_PATH" ] && [ ! -L "$VIMRC_PATH" ]; then
-    if grep -q "~/.config/vim/init.vim" "$VIMRC_PATH"; then
-      local vimrc_backup="${VIMRC_PATH}.backup.$(date +%Y%m%d_%H%M%S)"
-      cp "$VIMRC_PATH" "$vimrc_backup"
-      print_success "Backed up our .vimrc to $vimrc_backup"
-
-      # Hapus .vimrc kita karena akan dibuat baru
-      rm "$VIMRC_PATH"
-      print_info "Removed our .vimrc (will be recreated)"
-    else
-      print_info "Preserving existing .vimrc (not part of our configuration)"
-    fi
-  fi
-
-  print_success "Backup completed"
 }
 
-update_existing() {
-  print_header "Updating Existing Installation"
+vcfg_cmd_restore() {
+  local backup_file=$1
 
-  # Pastikan kita di directory yang benar
-  if [ ! -d "$INSTALL_DIR" ]; then
-    print_error "Installation directory not found: $INSTALL_DIR"
-    exit 1
+  if [ -z "$backup_file" ]; then
+    print_error "Usage: vcfg restore <backup-file>"
+    echo ""
+    echo "Examples:"
+    echo "  vcfg restore ~/.vim-backup.tar.gz"
+    echo "  vcfg restore ./my-backup-20231201.tar.gz"
+    return 1
   fi
 
-  cd "$INSTALL_DIR"
-
-  print_info "Fetching latest changes..."
-  git fetch origin
-
-  print_info "Pulling updates..."
-  git pull origin main
-
-  print_success "Configuration updated successfully!"
-
-  # Update vcfg jika needed
-  if [ -f "$INSTALL_DIR/vcfg.sh" ]; then
-    print_info "Updating vcfg..."
-    install_vcfg
+  if ! validate_backup_file "$backup_file"; then
+    return 1
   fi
 
-  # Update .vimrc jika itu milik kita
-  if [ -f "$VIMRC_PATH" ] && grep -q "~/.config/vim/init.vim" "$VIMRC_PATH"; then
-    print_info "Our .vimrc is already set up correctly"
-  else
-    print_warning "Our .vimrc setup may need update"
-    setup_vimrc
+  show_restore_summary "$backup_file"
+
+  if ! show_restore_warning; then
+    print_info "Restore cancelled"
+    return 0
   fi
 
-  print_success "Update completed!"
+  # Create pre-restore backup
+  local restore_backup="${HOME}/.vim-restore-backup-$(date +%Y%m%d_%H%M%S).tar.gz"
+  print_info "Creating pre-restore backup..."
+  create_restore_backup "$restore_backup" > /dev/null
+
+  # Restore backup
+  print_info "Restoring configuration..."
+  (restore_backup_archive "$backup_file") > /dev/null 2>&1 &
+  local pid=$!
+  show_percentage_progress $pid "Restoring configuration"
+  wait $pid
+
+  show_restore_success "$restore_backup"
 }
