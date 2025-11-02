@@ -45,7 +45,7 @@ if [[ $IS_REMOTE -eq 1 ]]; then
 fi
 
 # Load libs (adjust path if script installed elsewhere)
-export VCFG_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+VCFG_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Source libs
 source "${VCFG_ROOT}/lib/paths.sh"
