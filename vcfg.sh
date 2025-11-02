@@ -6,7 +6,7 @@ set -euo pipefail
 DEV_MODE=1
 
 # Load libs (adjust path if script installed elsewhere)
-VCFG_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export VCFG_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if [ $DEV_MODE -eq 0 ] && command -v /usr/sbin/vcfg 2 > /dev/null &> 1; then
   VCFG_ROOT="$HOME/.config/vim"
