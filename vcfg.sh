@@ -39,25 +39,25 @@ main() {
   case "${cmd}" in
     add) vcfg_cmd_add "$@" ;;
     backup) vcfg_cmd_backup "$@" ;;
-    restore) vcfg_cmd_restore "$@" ;;
-    remove | rm) vcfg_cmd_remove "$@" ;;
-    enable) vcfg_cmd_enable "$@" ;;
-    disable) vcfg_cmd_disable "$@" ;;
-    doctor) vcfg_cmd_doctor "$@" ;;
-    install) vcfg_cmd_install "$@" ;;
-    list | ls) vcfg_cmd_list "$@" ;;
-    set) vcfg_cmd_set "$@" ;;
-    reset) vcfg_cmd_reset "$@" ;;
-    search) vcfg_cmd_search "$@" ;;
-    update) vcfg_cmd_update "$@" ;;
-    system-update) vcfg_cmd_system_update "$@" ;;
-    reinstall) vcfg_cmd_reinstall "$@" ;;
     clean) vcfg_cmd_clean "$@" ;;
     coc) vcfg_cmd_coc "$@" ;;
-    info) vcfg_cmd_info "$@" ;;
+    disable) vcfg_cmd_disable "$@" ;;
+    doctor) vcfg_cmd_doctor "$@" ;;
     editmap) vcfg_cmd_editmap "$@" ;;
-    --version | -v) vcfg_cmd_version "$VCFG_VERSION" ;;
+    enable) vcfg_cmd_enable "$@" ;;
     --help | -h | help) vcfg_cmd_help "$@" ;;
+    info) vcfg_cmd_info "$@" ;;
+    install) vcfg_cmd_install "$@" ;;
+    list | ls) vcfg_cmd_list "$@" ;;
+    remove | rm) vcfg_cmd_remove "$@" ;;
+    reinstall) vcfg_cmd_reinstall "$@" ;;
+    reset) vcfg_cmd_reset "$@" ;;
+    restore) vcfg_cmd_restore "$@" ;;
+    search) vcfg_cmd_search "$@" ;;
+    set) vcfg_cmd_set "$@" ;;
+    system-update) vcfg_cmd_system_update "$@" ;;
+    update) vcfg_cmd_update "$@" ;;
+    --version | -v | version) vcfg_cmd_version "$VCFG_VERSION" ;;
     *)
       print_error "Unknown command: ${cmd}"
       echo ""
