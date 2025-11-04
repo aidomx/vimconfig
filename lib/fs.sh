@@ -52,3 +52,75 @@ get_editor_installed() {
   fi
   echo "$editor"
 }
+
+connection_test() {
+  local url=$1
+
+  # Method 1: Coba curl dulu
+  if command -v curl > /dev/null 2>&1; then
+    local response
+    if response=$(curl -s --connect-timeout 10 --max-time 15 "$url" 2> /dev/null); then
+      echo "$response"
+      return 0
+    fi
+  fi
+
+  # Method 2: Fallback ke wget
+  if command -v wget > /dev/null 2>&1; then
+    local response
+    if response=$(wget -q -O - --timeout=10 "$url" 2> /dev/null); then
+      echo "$response"
+      return 0
+    fi
+  fi
+
+  # Method 3: Fallback ke ping (basic connectivity test)
+  local domain
+  if [[ "$url" =~ https?://([^/]+) ]]; then
+    domain="${BASH_REMATCH[1]}"
+    if ping -c 1 -W 5 "$domain" > /dev/null 2>&1; then
+      echo "connected" # Return minimal response
+      return 0
+    fi
+  fi
+
+  # Method 4: Fallback ke /dev/tcp (bash built-in)
+  if [[ "$url" =~ https?://([^:/]+)(:([0-9]+))? ]]; then
+    local host="${BASH_REMATCH[1]}"
+    local port="${BASH_REMATCH[3]}"
+
+    if [[ "$url" == https://* ]]; then
+      port="${port:-443}"
+    else
+      port="${port:-80}"
+    fi
+
+    # Test koneksi TCP
+    if timeout 5 bash -c "echo > /dev/tcp/$host/$port" 2> /dev/null; then
+      echo "connected"
+      return 0
+    fi
+  fi
+}
+
+progress_check_internet() {
+  local url=$1
+  (connection_test "$url") > /dev/null 2>&1 &
+  local pid=$!
+  progress "dots" "$pid" " - Checking internet connection"
+  wait "$pid"
+}
+
+check_internet_connection() {
+  local url="${1:-https://github.com}"
+
+  progress_check_internet "$url"
+
+  local response=$(connection_test "$url")
+  if ! [ -n "$response" ]; then
+    echo ""
+    print_error "No internet connection, please check your internet, and try again!"
+    return 1
+  fi
+  return 0
+}

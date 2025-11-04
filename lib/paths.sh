@@ -41,6 +41,9 @@ setup_vcfg_paths() {
   export VCFG_DATA_DIR="${HOME}/.local/share/vcfg"
   export VCFG_BACKUP_DIR="${VCFG_DATA_DIR}/backups"
 
+  # Internet connection
+  export VCFG_INTERNET_CONNECTION=${VCFG_INTERNET_CONNECTION:-0}
+
   # Create directories if they don't exist
   mkdir -p "${VCFG_DATA_DIR}" "${VCFG_BACKUP_DIR}"
 }

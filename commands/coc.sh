@@ -13,7 +13,7 @@ vcfg_cmd_coc() {
     echo "  list                      - List installed Coc extensions"
     echo "  add <extension>           - Add Coc extension"
     echo "  remove <extension>        - Remove Coc extension"
-    echo "  install                   - Install all extensions"
+    # echo "  install                   - Install all extensions"
     echo "  update                    - Update all extensions"
     echo "  -e, --edit                - Edit coc.vim manually"
     echo "  show                      - Show current extensions"
@@ -33,7 +33,7 @@ vcfg_cmd_coc() {
 
   case "$command" in
     "list") list_coc_extensions "$coc_file" ;;
-    "add")
+    "add" | "install" | "-i")
       [ -z "$extension" ] && print_error "Usage: vcfg coc add <extension>" && return 1
       add_coc_extension "$extension" "$coc_file"
       ;;
@@ -41,10 +41,10 @@ vcfg_cmd_coc() {
       [ -z "$extension" ] && print_error "Usage: vcfg coc remove <extension>" && return 1
       remove_coc_extension "$extension" "$coc_file"
       ;;
-    "install") install_coc_extensions "$coc_file" ;;
-    "update") update_coc_extensions "$coc_file" ;;
+    # "install") install_coc_extensions "$coc_file" ;;
+    "update" | "-u") update_coc_extensions "$coc_file" ;;
     "-e" | "--edit") edit_coc_file "$coc_file" ;;
-    "show") show_coc_extensions "$coc_file" ;;
+    "show" | "-s") show_coc_extensions "$coc_file" ;;
     *)
       print_error "Unknown command: $command"
       echo "Run 'vcfg coc' for usage information"

@@ -2,31 +2,10 @@
 
 install_coc_extensions() {
   local coc_file=$1
+  local extensions=$(check_coc_extensions "$coc_file")
 
-  print_header "Installing Coc Extensions"
-
-  local extensions=$(extract_coc_extensions "$coc_file")
-
-  if [ -z "$extensions" ]; then
-    print_warning "No extensions to install"
-    return 0
-  fi
-
-  for extension in "${extensions[@]}"; do
-    print_info "Found ${#extension} extensions to install"
-  done
   echo ""
-
-  local coc_extensions_dir="${VCFG_COC_EXTENSIONS:-${HOME}/.config/coc/extensions}"
-  mkdir -p "$coc_extensions_dir"
-
-  cd "$coc_extensions_dir" || {
-    print_error "Cannot access Coc extensions directory"
-    return 1
-  }
-
-  # Create package.json if not exists
-  [ ! -f "package.json" ] && echo '{"dependencies":{}}' > package.json
+  check_coc_extensions_access "$@"
 
   local total=$(echo "$extensions" | grep -c .)
   local count=0
@@ -46,7 +25,7 @@ install_coc_extensions() {
   ) > /dev/null 2>&1 &
 
   local pid=$!
-  show_percentage_progress $pid "Installing $total extensions"
+  progress "percent" $pid "Installing $total extensions"
   wait $pid
 
   # Verify installations
@@ -54,32 +33,99 @@ install_coc_extensions() {
   verify_coc_installations "$extensions"
 }
 
-update_coc_extensions() {
+sync_install_coc_extensions() {
+  local coc_file=${1:-}
+  local extensions=$(check_coc_extensions "$coc_file")
+  check_coc_extensions_access
+  # Create package.json if not exists
+  [ ! -f "package.json" ] && echo '{"dependencies":{}}' > package.json
+
+  while IFS= read -r extension; do
+    if [ -n "$extension" ]; then
+      local ext_dir="node_modules/${extension}"
+
+      if [ ! -d "$ext_dir" ]; then
+        (npm install "$extension" --save --no-package-lock) > /dev/null 2>&1 &
+        local pid=$!
+        progress "percent" "$pid" " - Installed extension"
+        wait "$pid"
+      fi
+    fi
+  done <<< "$extensions"
+  echo ""
+}
+
+sync_uninstall_coc_extensions() {
+  local extensions="${1:-}"
+
+  check_coc_extensions_access
+
+  while IFS= read -r extension; do
+    if [ -n "$extension" ]; then
+      local ext_dir="node_modules/${extension}"
+
+      if [ -d "$ext_dir" ]; then
+        (npm uninstall "$extension") > /dev/null 2>&1 &
+        local pid=$!
+        progress "percent" "$pid" " - Removing extensions"
+        wait "$pid"
+      fi
+    fi
+  done <<< "$extensions"
+  echo ""
+}
+
+list_coc_update() {
   local coc_file=$1
+  local extensions=$(extract_coc_extensions "$coc_file")
 
-  print_header "Updating Coc Extensions"
-
-  local coc_extensions_dir="${VCFG_COC_EXTENSIONS:-${HOME}/.config/coc/extensions}"
-
-  if [ ! -d "$coc_extensions_dir" ]; then
-    print_warning "No Coc extensions directory found"
+  if [ -z "$extensions" ]; then
+    print_warning "No Coc extensions found in configuration"
     return 0
   fi
 
-  cd "$coc_extensions_dir" || {
-    print_error "Cannot access Coc extensions directory"
-    return 1
-  }
+  while IFS= read -r extension; do
+    if [ -n "$extension" ]; then
+      local status
+      local size="node_modules/${extension}"
+      if is_coc_extension_installed "$extension"; then
+        status="${GREEN}[installed]${NC} ($(du -sh $size | awk -F' ' {'print $1'}))"
+      else
+        status="${YELLOW}[not installed]${NC}"
+      fi
 
-  print_info "Updating all Coc extensions..."
+      echo -e "   ${CYAN}•${NC} ${extension} ${status}"
+    fi
+  done <<< "$extensions"
+  echo ""
+}
 
-  # Show progress for update process
-  (npm update > /dev/null 2>&1) &
-  local pid=$!
-  show_percentage_progress $pid "Updating extensions"
-  wait $pid
+verify_coc_update() {
+  local extensions=$1
+  local installed_count=0
+  local total_count=0
 
-  print_success "Coc extensions updated successfully"
+  echo ""
+
+  while IFS= read -r extension; do
+    if [ -n "$extension" ]; then
+      local ext_dir="node_modules/${extension}"
+      total_count=$((total_count + 1))
+      if is_coc_extension_installed "$extension"; then
+        echo -e "   ${CYAN}•${NC} $extension - ${CYAN}[update]${NC} ($(du -sh $ext_dir | awk -F' ' {'print $1'}))"
+        installed_count=$((installed_count + 1))
+      else
+        echo -e "   ${RED}✗${NC} $extension"
+      fi
+    fi
+  done <<< "$extensions"
+
+  echo ""
+  if [ $installed_count -eq $total_count ]; then
+    print_info "$installed_count/$total_count extensions updated"
+  else
+    print_warning "$installed_count/$total_count extensions updated"
+  fi
 }
 
 verify_coc_installations() {
@@ -87,24 +133,24 @@ verify_coc_installations() {
   local installed_count=0
   local total_count=0
 
-  echo -e "${CYAN}Verifying installations:${NC}"
+  print_info "Verifying extensions:"
   echo ""
 
   while IFS= read -r extension; do
     if [ -n "$extension" ]; then
       total_count=$((total_count + 1))
       if is_coc_extension_installed "$extension"; then
-        echo -e "  ${GREEN}✓${NC} $extension - installed"
+        echo -e " • $extension - ${CYAN}[installed]${NC}"
         installed_count=$((installed_count + 1))
       else
-        echo -e "  ${RED}✗${NC} $extension - not installed"
+        echo -e " ${RED}✗${NC} $extension"
       fi
     fi
   done <<< "$extensions"
 
   echo ""
   if [ $installed_count -eq $total_count ]; then
-    print_success "All $installed_count extensions installed"
+    print_info "$installed_count/$total_count extensions installed"
   else
     print_warning "$installed_count/$total_count extensions installed"
   fi

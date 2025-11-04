@@ -22,6 +22,20 @@ EOF
   fi
 }
 
+reset_coc_extensions() {
+  cat > "$temp_file" << EOF
+" ========================
+" Coc.nvim Configuration
+" ========================
+
+" Global extensions - add your extensions here
+let g:coc_global_extensions = []
+
+" Coc settings
+" Use \`:CocConfig\` to customize Coc settings
+EOF
+}
+
 extract_coc_extensions() {
   local coc_file=$1
   grep -A 20 "let g:coc_global_extensions" "$coc_file" \
@@ -65,12 +79,14 @@ rebuild_coc_file() {
 
 " Global extensions - add your extensions here
 let g:coc_global_extensions = [
-${extensions_content} \\
-]
+${extensions_content}  \\ ]
 
 " Coc settings
 " Use \`:CocConfig\` to customize Coc settings
 EOF
 
+  if [ "$total" -eq 0 ]; then
+    reset_coc_extensions
+  fi
   mv "$temp_file" "$coc_file"
 }
