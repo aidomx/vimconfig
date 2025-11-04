@@ -44,7 +44,39 @@ vcfg_cmd_coc() {
     # "install") install_coc_extensions "$coc_file" ;;
     "update" | "-u") update_coc_extensions "$coc_file" ;;
     "-e" | "--edit") edit_coc_file "$coc_file" ;;
-    "show" | "-s") show_coc_extensions "$coc_file" ;;
+
+    "show" | "-s")
+      local param1="${2:-}"
+      local param2="${3:-}"
+
+      # Jika tidak ada parameter, tampilkan semua
+      if [ -z "$param1" ]; then
+        show_coc_extensions "$coc_file"
+      # Jika ada dua parameter angka (range atau specific rows)
+      elif [ -n "$param1" ] && [ -n "$param2" ]; then
+        if [[ "$param1" =~ ^[0-9]+$ ]] && [[ "$param2" =~ ^[0-9]+$ ]] && [ "$param1" -gt 0 ] && [ "$param2" -gt 0 ]; then
+          # Jika param1 > param2, swap
+          if [ "$param1" -gt "$param2" ]; then
+            local temp="$param1"
+            param1="$param2"
+            param2="$temp"
+          fi
+          show_coc_extensions "$coc_file" "$param1:$param2"
+        else
+          print_warning "Invalid range: '$param1 $param2'. Showing all extensions."
+          show_coc_extensions "$coc_file"
+        fi
+      # Jika satu parameter (limit atau single row)
+      else
+        if [[ "$param1" =~ ^[0-9]+$ ]] && [ "$param1" -gt 0 ]; then
+          show_coc_extensions "$coc_file" "$param1"
+        else
+          print_warning "Invalid parameter: '$param1'. Showing all extensions."
+          show_coc_extensions "$coc_file"
+        fi
+      fi
+      ;;
+
     *)
       print_error "Unknown command: $command"
       echo "Run 'vcfg coc' for usage information"

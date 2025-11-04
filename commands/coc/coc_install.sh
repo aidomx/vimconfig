@@ -87,14 +87,22 @@ list_coc_update() {
   while IFS= read -r extension; do
     if [ -n "$extension" ]; then
       local status
-      local size="node_modules/${extension}"
+      local size="0K"
+      local ext_dir="node_modules/${extension}"
+
+      if [ -d "$ext_dir" ]; then
+        size=$(du -sh $ext_dir | awk -F' ' {'print $1'})
+      else
+        size="0K"
+      fi
+
       if is_coc_extension_installed "$extension"; then
-        status="${GREEN}[installed]${NC} ($(du -sh $size | awk -F' ' {'print $1'}))"
+        status="${GREEN}[installed]${NC}"
       else
         status="${YELLOW}[not installed]${NC}"
       fi
 
-      echo -e "   ${CYAN}•${NC} ${extension} ${status}"
+      echo -e "   ${CYAN}•${NC} ${extension} ${status} ($size)"
     fi
   done <<< "$extensions"
   echo ""
@@ -104,6 +112,7 @@ verify_coc_update() {
   local extensions=$1
   local installed_count=0
   local total_count=0
+  local size="0K"
 
   echo ""
 
@@ -111,11 +120,18 @@ verify_coc_update() {
     if [ -n "$extension" ]; then
       local ext_dir="node_modules/${extension}"
       total_count=$((total_count + 1))
+
+      if [ -d "$ext_dir" ]; then
+        size=$(du -sh $ext_dir | awk -F' ' {'print $1'})
+      else
+        size="0K"
+      fi
+
       if is_coc_extension_installed "$extension"; then
-        echo -e "   ${CYAN}•${NC} $extension - ${CYAN}[update]${NC} ($(du -sh $ext_dir | awk -F' ' {'print $1'}))"
+        echo -e "   ${CYAN}•${NC} $extension - ${CYAN}[updated]${NC} ($size)"
         installed_count=$((installed_count + 1))
       else
-        echo -e "   ${RED}✗${NC} $extension"
+        echo -e "   ${RED}✗${NC} $extension ${YELLOW}[failed]${NC} ($size)"
       fi
     fi
   done <<< "$extensions"
@@ -132,15 +148,24 @@ verify_coc_installations() {
   local extensions=$1
   local installed_count=0
   local total_count=0
+  local size="0K"
 
   print_info "Verifying extensions:"
   echo ""
 
   while IFS= read -r extension; do
     if [ -n "$extension" ]; then
+      local ext_dir="node_modules/${extension}"
       total_count=$((total_count + 1))
+
+      if [ -d "$ext_dir" ]; then
+        size=$(du -sh $ext_dir | awk -F' ' {'print $1'})
+      else
+        size="0K"
+      fi
+
       if is_coc_extension_installed "$extension"; then
-        echo -e " • $extension - ${CYAN}[installed]${NC}"
+        echo -e " • $extension - ${CYAN}[installed]${NC} ($size)"
         installed_count=$((installed_count + 1))
       else
         echo -e " ${RED}✗${NC} $extension"

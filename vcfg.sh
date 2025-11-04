@@ -19,6 +19,7 @@ source "${VCFG_ROOT}/lib/colors.sh"
 source "${VCFG_ROOT}/lib/logging.sh"
 source "${VCFG_ROOT}/lib/execs.sh"
 source "${VCFG_ROOT}/lib/progress.sh"
+source "${VCFG_ROOT}/lib/table.sh"
 
 # Source command implementations
 for f in "${VCFG_ROOT}/commands"/*.sh; do
