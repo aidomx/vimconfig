@@ -136,10 +136,10 @@ install_vcfg() {
 
   case "${OS}" in
     "Android")
-      VCFG_BIN="$PREFIX/bin"
+      VCFG_BIN="$PREFIX/bin/vcfg"
       print_info "Installing vcfg to ${VCFG_BIN}..."
 
-      if [ -w "$VCFG_BIN" ]; then
+      if [ -w "$PREFIX/bin" ]; then
         cp "$vcfg_source" "$VCFG_BIN"
         chmod +x "$VCFG_BIN"
       fi
