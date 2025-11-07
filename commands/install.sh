@@ -132,23 +132,39 @@ install_vcfg() {
     return 1
   fi
 
-  print_info "Installing vcfg to ${VCFG_BIN}..."
+  local OS="$(uname -o)"
 
-  # Check if we can write to /usr/bin
-  if [ -w "/usr/bin" ]; then
-    cp "$vcfg_source" "$VCFG_BIN"
-    chmod +x "$VCFG_BIN"
-  else
-    # Need sudo
-    if command -v sudo &> /dev/null; then
-      sudo cp "$vcfg_source" "$VCFG_BIN"
-      sudo chmod +x "$VCFG_BIN"
-    else
-      print_warning "Cannot install to /usr/bin (no sudo available)"
-      print_info "You can manually copy: cp $vcfg_source $VCFG_BIN"
-      return 1
-    fi
-  fi
+  case "${OS}" in
+    "Android")
+      VCFG_BIN="$PREFIX/bin"
+      print_info "Installing vcfg to ${VCFG_BIN}..."
+
+      if [ -w "$VCFG_BIN" ]; then
+        cp "$vcfg_source" "$VCFG_BIN"
+        chmod +x "$VCFG_BIN"
+      fi
+
+      ;;
+    "GNU/Linux")
+      print_info "Installing vcfg to ${VCFG_BIN}..."
+
+      # Check if we can write to /usr/bin
+      if [ -w "/usr/bin" ]; then
+        cp "$vcfg_source" "$VCFG_BIN"
+        chmod +x "$VCFG_BIN"
+      else
+        # Need sudo
+        if command -v sudo &> /dev/null; then
+          sudo cp "$vcfg_source" "$VCFG_BIN"
+          sudo chmod +x "$VCFG_BIN"
+        else
+          print_warning "Cannot install to /usr/bin (no sudo available)"
+          print_info "You can manually copy: cp $vcfg_source $VCFG_BIN"
+          return 1
+        fi
+      fi
+      ;;
+  esac
 
   # Verify installation
   if command -v vcfg > /dev/null 2>&1; then
@@ -158,6 +174,7 @@ install_vcfg() {
     print_error "vcfg installation failed"
     return 1
   fi
+
 }
 
 install_optional_packages() {
