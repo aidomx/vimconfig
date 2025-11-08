@@ -86,12 +86,12 @@ install_plugins() {
     # vim-plug dengan simple percentage
     print_info "Installing plugins via vim-plug..."
 
-    vim --not-a-term -c 'PlugInstall --sync' -c 'qa!' 2 > /dev/null &> 1 &
+    (vim --not-a-term -c 'PlugInstall --sync' -c 'qa!') > /dev/null 2>&1 &
     local vim_pid=$!
-
     progress "percent" $vim_pid "vim-plug plugins"
-    wait $vim_pid
-    print_success "Plugins installed via vim-plug"
+    wait $vim_pid || {
+      print_success "Plugins installed via vim-plug"
+    }
 
   elif [ -d "${HOME}/.local/share/nvim/site/pack/packer/start/packer.nvim" ]; then
     # packer.nvim
