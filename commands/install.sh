@@ -85,17 +85,27 @@ install_plugins() {
   if [ -f "${HOME}/.vim/autoload/plug.vim" ] || [ -f "${HOME}/.local/share/nvim/site/autoload/plug.vim" ]; then
     print_info "Installing plugins via vim-plug..."
 
-    vim -c 'PlugInstall --sync' -c 'qa!' > /dev/null 2>&1 &
+    vim -N -u "$HOME/.vimrc" -c 'PlugInstall --sync' -c 'qa!' > /dev/null 2>&1 &
     local vim_pid=$!
     progress "percent" $vim_pid "${CYAN}[PROGRESS]${NC} vim-plug plugins"
-    wait $vim_pid || {
-      # Verifikasi instalasi
-      if [ -d "${HOME}/.vim/plugged" ] && [ "$(ls -A ${HOME}/.vim/plugged 2> /dev/null | wc -l)" -gt 0 ]; then
-        print_success "Plugins installed via vim-plug"
+    wait $vim_pid
+    local exit_code=$?
+
+    # Verifikasi instalasi - cek apakah ada plugin yang terinstall
+    if [ $exit_code -eq 0 ]; then
+      local plugin_count=$(find "${HOME}/.vim/plugged" -maxdepth 1 -type d 2> /dev/null | wc -l)
+      # Kurangi 1 karena hitung folder .vim/plugged sendiri
+      plugin_count=$((plugin_count - 1))
+
+      if [ $plugin_count -gt 0 ]; then
+        print_success "Plugins installed via vim-plug (${plugin_count} plugins)"
       else
-        print_warning "Plugin installation may have issues. Run manually: vim +PlugInstall"
+        print_warning "No plugins found. Check your plugins.vim configuration"
       fi
-    }
+    else
+      print_warning "Plugin installation may have issues. Run manually: vim +PlugInstall"
+    fi
+
   elif [ -d "${HOME}/.local/share/nvim/site/pack/packer/start/packer.nvim" ]; then
     print_info "Installing plugins via packer.nvim..."
 
