@@ -86,10 +86,10 @@ install_plugins() {
     # vim-plug dengan simple percentage
     print_info "Installing plugins via vim-plug..."
 
-    vim -c 'PlugInstall --sync' -c 'qa!' > /dev/null 2>&1 &
+    vim --not-a-ter. -c 'PlugInstall --sync' -c 'qa!' 2 > /dev/null &> 1 &
     local vim_pid=$!
 
-    show_percentage_progress $vim_pid "vim-plug plugins"
+    progress "percent" $vim_pid "vim-plug plugins"
     wait $vim_pid
     print_success "Plugins installed via vim-plug"
 
@@ -97,10 +97,10 @@ install_plugins() {
     # packer.nvim
     print_info "Installing plugins via packer.nvim..."
 
-    nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync' > /dev/null 2>&1 &
+    nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync' 2 > /dev/null &> 1 &
     local nvim_pid=$!
 
-    show_percentage_progress $nvim_pid "Installing packer.nvim plugins"
+    progress "percent" $nvim_pid "Installing packer.nvim plugins"
     wait $nvim_pid
     print_success "Plugins installed via packer.nvim"
 
@@ -108,10 +108,10 @@ install_plugins() {
     # lazy.nvim
     print_info "Installing plugins via lazy.nvim..."
 
-    nvim --headless -c 'Lazy sync' -c 'qa!' > /dev/null 2>&1 &
+    nvim --headless -c 'Lazy sync' -c 'qa!' 2 > /dev/null &> 1 &
     local lazy_pid=$!
 
-    show_percentage_progress $lazy_pid "Installing lazy.nvim plugins"
+    progress "percent" $lazy_pid "Installing lazy.nvim plugins"
     wait $lazy_pid
     print_success "Plugins installed via lazy.nvim"
 
@@ -168,6 +168,7 @@ install_vcfg() {
 
   # Verify installation
   if command -v vcfg > /dev/null 2>&1; then
+    cp -f "$INSTALL_DIR/coc-settings.json" "$HOME/.vim/"
     print_success "vcfg installed successfully"
     vcfg --version
   else

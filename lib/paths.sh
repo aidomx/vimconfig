@@ -44,6 +44,9 @@ setup_vcfg_paths() {
   # Internet connection
   export VCFG_INTERNET_CONNECTION=${VCFG_INTERNET_CONNECTION:-0}
 
+  # Is remote
+  export IS_REMOTE=${IS_REMOTE:-0}
+
   # Create directories if they don't exist
   mkdir -p "${VCFG_DATA_DIR}" "${VCFG_BACKUP_DIR}"
 }
