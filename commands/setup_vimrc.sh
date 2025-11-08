@@ -47,8 +47,6 @@ create_clean_vimrc() {
 if filereadable(expand('~/.config/vim/init.vim'))
   source ~/.config/vim/init.vim
 endif
-
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 EOF
   print_success "Created clean .vimrc"
 }
@@ -66,7 +64,6 @@ append_to_vimrc() {
   echo "if filereadable(expand('~/.config/vim/init.vim'))" >> "$VIMRC_PATH"
   echo "  source ~/.config/vim/init.vim" >> "$VIMRC_PATH"
   echo "endif" >> "$VIMRC_PATH"
-  echo "[ -f ~/.fzf.bash ] && source ~/.fzf.bash" >> "$VIMRC_PATH"
 
   print_success "Added source to existing .vimrc"
 }
