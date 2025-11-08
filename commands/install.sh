@@ -86,7 +86,7 @@ install_plugins() {
     # vim-plug dengan simple percentage
     print_info "Installing plugins via vim-plug..."
 
-    vim --not-a-ter. -c 'PlugInstall --sync' -c 'qa!' 2 > /dev/null &> 1 &
+    vim --not-a-term -c 'PlugInstall --sync' -c 'qa!' 2 > /dev/null &> 1 &
     local vim_pid=$!
 
     progress "percent" $vim_pid "vim-plug plugins"
