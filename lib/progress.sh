@@ -34,7 +34,7 @@ progress_bar() {
   local duration=0
   local filled=0
 
-  while [[ $duration -lt $max_duration ]] && kill -0 "$pid" > /dev/null 2>&1; do
+  while [[ $duration -lt $max_duration ]] && kill -0 "$pid" 2> /dev/null; do
     filled=$((duration * width / max_duration))
     local empty=$((width - filled))
 
@@ -66,7 +66,7 @@ progress_percentage() {
 
   local duration=0
 
-  while [[ $duration -lt $max_duration ]] && kill -0 "$pid" > /dev/null 2>&1; do
+  while [[ $duration -lt $max_duration ]] && kill -0 "$pid" 2> /dev/null; do
     local percent=$((duration * 100 / max_duration))
     [[ $percent -gt 100 ]] && percent=100
 
@@ -87,7 +87,7 @@ progress_spinner() {
   local spin_count=${#spinstr}
   local index=0
 
-  while kill -0 "$pid" > /dev/null 2>&1; do
+  while kill -0 "$pid" 2> /dev/null; do
     local spin_char="${spinstr:index:1}"
     printf "\r${CYAN}${message}${NC} [%s] " "$spin_char"
 
@@ -106,7 +106,7 @@ progress_dots() {
   local dot_count=0
   local max_dots=3
 
-  while kill -0 "$pid" > /dev/null 2>&1; do
+  while kill -0 "$pid" 2> /dev/null; do
     local dots=""
     for ((i = 0; i < dot_count; i++)); do dots+="."; done
     for ((i = dot_count; i < max_dots; i++)); do dots+=" "; done

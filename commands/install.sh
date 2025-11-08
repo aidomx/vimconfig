@@ -87,7 +87,7 @@ install_plugins() {
 
     vim -N -u "$HOME/.vimrc" -c 'PlugInstall --sync' -c 'qa!' > /dev/null 2>&1 &
     local vim_pid=$!
-    progress "percent" $vim_pid "vim-plug plugins"
+    progress "percent" $vim_pid "${CYAN}[PROGRESS]${NC} vim-plug plugins"
     wait $vim_pid || {
       # Verifikasi instalasi
       if [ -d "${HOME}/.vim/plugged" ] && [ "$(ls -A ${HOME}/.vim/plugged 2> /dev/null | wc -l)" -gt 0 ]; then
