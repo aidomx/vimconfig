@@ -83,21 +83,24 @@ install_plugins() {
 
   # Install berdasarkan plugin manager
   if [ -f "${HOME}/.vim/autoload/plug.vim" ] || [ -f "${HOME}/.local/share/nvim/site/autoload/plug.vim" ]; then
-    # vim-plug dengan simple percentage
     print_info "Installing plugins via vim-plug..."
 
-    vim --not-a-term -c 'PlugInstall' -c 'qa!' 2 > /dev/null &> 1 &
+    vim -N -u "$HOME/.vimrc" -c 'PlugInstall --sync' -c 'qa!' > /dev/null 2>&1 &
     local vim_pid=$!
     progress "percent" $vim_pid "vim-plug plugins"
-    wait $vim_pid || {
+    wait $vim_pid
+
+    # Verifikasi instalasi
+    if [ -d "${HOME}/.vim/plugged" ] && [ "$(ls -A ${HOME}/.vim/plugged 2> /dev/null | wc -l)" -gt 0 ]; then
       print_success "Plugins installed via vim-plug"
-    }
+    else
+      print_warning "Plugin installation may have issues. Run manually: vim +PlugInstall"
+    fi
 
   elif [ -d "${HOME}/.local/share/nvim/site/pack/packer/start/packer.nvim" ]; then
-    # packer.nvim
     print_info "Installing plugins via packer.nvim..."
 
-    nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync' 2 > /dev/null &> 1 &
+    nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync' > /dev/null 2>&1 &
     local nvim_pid=$!
 
     progress "percent" $nvim_pid "Installing packer.nvim plugins"
@@ -105,10 +108,9 @@ install_plugins() {
     print_success "Plugins installed via packer.nvim"
 
   elif [ -d "${HOME}/.local/share/nvim/lazy/lazy.nvim" ]; then
-    # lazy.nvim
     print_info "Installing plugins via lazy.nvim..."
 
-    nvim --headless -c 'Lazy sync' -c 'qa!' 2 > /dev/null &> 1 &
+    nvim --headless -c 'Lazy sync' -c 'qa!' > /dev/null 2>&1 &
     local lazy_pid=$!
 
     progress "percent" $lazy_pid "Installing lazy.nvim plugins"
