@@ -54,22 +54,22 @@ check_existing_installation() {
     read -p "Enter your choice [1-3]: " choice
 
     case $choice in
-      1)
-        backup_existing
-        return 0
-        ;;
-      2)
-        update_existing
-        exit 0
-        ;;
-      3)
-        print_info "Installation cancelled"
-        exit 0
-        ;;
-      *)
-        print_error "Invalid choice"
-        exit 1
-        ;;
+    1)
+      backup_existing
+      return 0
+      ;;
+    2)
+      update_existing
+      exit 0
+      ;;
+    3)
+      print_info "Installation cancelled"
+      exit 0
+      ;;
+    *)
+      print_error "Invalid choice"
+      exit 1
+      ;;
     esac
   fi
 }
@@ -85,7 +85,7 @@ install_plugins() {
   if [ -f "${HOME}/.vim/autoload/plug.vim" ] || [ -f "${HOME}/.local/share/nvim/site/autoload/plug.vim" ]; then
     print_info "Installing plugins via vim-plug..."
 
-    vim -N -u "$HOME/.vimrc" -c 'PlugInstall --sync' -c 'qa!' > /dev/null 2>&1 &
+    vim -N -u "$HOME/.vimrc" -c 'PlugInstall --sync' -c 'qa!' >/dev/null 2>&1 &
     local vim_pid=$!
     progress "percent" $vim_pid "${CYAN}[PROGRESS]${NC} vim-plug plugins"
     wait $vim_pid
@@ -93,8 +93,7 @@ install_plugins() {
 
     # Verifikasi instalasi - cek apakah ada plugin yang terinstall
     if [ $exit_code -eq 0 ]; then
-      local plugin_count=$(find "${HOME}/.vim/plugged" -maxdepth 1 -type d 2> /dev/null | wc -l)
-      # Kurangi 1 karena hitung folder .vim/plugged sendiri
+      local plugin_count=$(find "${HOME}/.vim/plugged" -maxdepth 1 -type d 2>/dev/null | wc -l)
       plugin_count=$((plugin_count - 1))
 
       if [ $plugin_count -gt 0 ]; then
@@ -109,7 +108,7 @@ install_plugins() {
   elif [ -d "${HOME}/.local/share/nvim/site/pack/packer/start/packer.nvim" ]; then
     print_info "Installing plugins via packer.nvim..."
 
-    nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync' > /dev/null 2>&1 &
+    nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync' >/dev/null 2>&1 &
     local nvim_pid=$!
 
     progress "percent" $nvim_pid "Installing packer.nvim plugins"
@@ -119,7 +118,7 @@ install_plugins() {
   elif [ -d "${HOME}/.local/share/nvim/lazy/lazy.nvim" ]; then
     print_info "Installing plugins via lazy.nvim..."
 
-    nvim --headless -c 'Lazy sync' -c 'qa!' > /dev/null 2>&1 &
+    nvim --headless -c 'Lazy sync' -c 'qa!' >/dev/null 2>&1 &
     local lazy_pid=$!
 
     progress "percent" $lazy_pid "Installing lazy.nvim plugins"
@@ -146,39 +145,39 @@ install_vcfg() {
   local OS="$(uname -o)"
 
   case "${OS}" in
-    "Android")
-      VCFG_BIN="$PREFIX/bin/vcfg"
-      print_info "Installing vcfg to ${VCFG_BIN}..."
+  "Android")
+    VCFG_BIN="$PREFIX/bin/vcfg"
+    print_info "Installing vcfg to ${VCFG_BIN}..."
 
-      if [ -w "$PREFIX/bin" ]; then
-        cp "$vcfg_source" "$VCFG_BIN"
-        chmod +x "$VCFG_BIN"
-      fi
+    if [ -w "$PREFIX/bin" ]; then
+      cp "$vcfg_source" "$VCFG_BIN"
+      chmod +x "$VCFG_BIN"
+    fi
 
-      ;;
-    "GNU/Linux")
-      print_info "Installing vcfg to ${VCFG_BIN}..."
+    ;;
+  "GNU/Linux")
+    print_info "Installing vcfg to ${VCFG_BIN}..."
 
-      # Check if we can write to /usr/bin
-      if [ -w "/usr/bin" ]; then
-        cp "$vcfg_source" "$VCFG_BIN"
-        chmod +x "$VCFG_BIN"
+    # Check if we can write to /usr/bin
+    if [ -w "/usr/bin" ]; then
+      cp "$vcfg_source" "$VCFG_BIN"
+      chmod +x "$VCFG_BIN"
+    else
+      # Need sudo
+      if command -v sudo &>/dev/null; then
+        sudo cp "$vcfg_source" "$VCFG_BIN"
+        sudo chmod +x "$VCFG_BIN"
       else
-        # Need sudo
-        if command -v sudo &> /dev/null; then
-          sudo cp "$vcfg_source" "$VCFG_BIN"
-          sudo chmod +x "$VCFG_BIN"
-        else
-          print_warning "Cannot install to /usr/bin (no sudo available)"
-          print_info "You can manually copy: cp $vcfg_source $VCFG_BIN"
-          return 1
-        fi
+        print_warning "Cannot install to /usr/bin (no sudo available)"
+        print_info "You can manually copy: cp $vcfg_source $VCFG_BIN"
+        return 1
       fi
-      ;;
+    fi
+    ;;
   esac
 
   # Verify installation
-  if command -v vcfg > /dev/null 2>&1; then
+  if command -v vcfg >/dev/null 2>&1; then
     cp -f "$INSTALL_DIR/coc-settings.json" "$HOME/.vim/"
     print_success "vcfg installed successfully"
     vcfg --version
@@ -198,12 +197,12 @@ install_optional_packages() {
     print_info "Detected Termux environment"
     pkg install -y nodejs python
     pip install black flake8 autopep8
-  elif command -v pacman &> /dev/null; then
+  elif command -v pacman &>/dev/null; then
     # Arch Linux
     print_info "Detected Arch Linux"
     sudo pacman -S --noconfirm nodejs npm python-pip
     pip install black flake8 autopep8
-  elif command -v apt-get &> /dev/null; then
+  elif command -v apt-get &>/dev/null; then
     # Debian/Ubuntu
     print_info "Detected Debian/Ubuntu"
     sudo apt-get update

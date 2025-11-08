@@ -5,23 +5,23 @@ progress() {
   shift
 
   case "${progress_type}" in
-    "bar")
-      progress_bar "$@"
-      ;;
-    "percent" | "percentage")
-      progress_percentage "$@"
-      ;;
-    "spinner")
-      progress_spinner "$@"
-      ;;
-    "dots")
-      progress_dots "$@"
-      ;;
-    *)
-      echo "Invalid progress type: $progress_type"
-      echo "Available: bar, percent, spinner, dots"
-      return 1
-      ;;
+  "bar")
+    progress_bar "$@"
+    ;;
+  "percent" | "percentage")
+    progress_percentage "$@"
+    ;;
+  "spinner")
+    progress_spinner "$@"
+    ;;
+  "dots")
+    progress_dots "$@"
+    ;;
+  *)
+    echo "Invalid progress type: $progress_type"
+    echo "Available: bar, percent, spinner, dots"
+    return 1
+    ;;
   esac
 }
 
@@ -34,7 +34,7 @@ progress_bar() {
   local duration=0
   local filled=0
 
-  while [[ $duration -lt $max_duration ]] && kill -0 "$pid" 2> /dev/null; do
+  while [[ $duration -lt $max_duration ]] && kill -0 "$pid" 2>/dev/null; do
     filled=$((duration * width / max_duration))
     local empty=$((width - filled))
 
@@ -63,19 +63,15 @@ progress_percentage() {
   local pid=$1
   local message=${2:-"Processing"}
   local max_duration=${3:-60}
-
   local duration=0
+  local percent=0
 
-  while [[ $duration -lt $max_duration ]] && kill -0 "$pid" 2> /dev/null; do
-    local percent=$((duration * 100 / max_duration))
-    [[ $percent -gt 100 ]] && percent=100
-
+  while [[ "$percent" -lt 100 ]]; do
+    percent=$((duration * 100 / max_duration))
     echo -ne "\r${CYAN}${message}${NC}: ${percent}%"
     sleep 1
     duration=$((duration + 1))
   done
-
-  echo -ne "\r${CYAN}${message}${NC}: 100%"
   echo ""
 }
 
@@ -87,7 +83,7 @@ progress_spinner() {
   local spin_count=${#spinstr}
   local index=0
 
-  while kill -0 "$pid" 2> /dev/null; do
+  while kill -0 "$pid" 2>/dev/null; do
     local spin_char="${spinstr:index:1}"
     printf "\r${CYAN}${message}${NC} [%s] " "$spin_char"
 
@@ -106,7 +102,7 @@ progress_dots() {
   local dot_count=0
   local max_dots=3
 
-  while kill -0 "$pid" 2> /dev/null; do
+  while kill -0 "$pid" 2>/dev/null; do
     local dots=""
     for ((i = 0; i < dot_count; i++)); do dots+="."; done
     for ((i = dot_count; i < max_dots; i++)); do dots+=" "; done
