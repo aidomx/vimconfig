@@ -74,6 +74,12 @@ check_existing_installation() {
   fi
 }
 
+copy_plugins_tmp() {
+  cat >"$HOME/.vimrc" <<EOF
+  $(cat ~/.config/vim/core/plugins.vim)
+EOF
+}
+
 install_plugins() {
   print_header "Installing Plugins"
 
@@ -84,7 +90,7 @@ install_plugins() {
   # Install berdasarkan plugin manager
   if [ -f "${HOME}/.vim/autoload/plug.vim" ] || [ -f "${HOME}/.local/share/nvim/site/autoload/plug.vim" ]; then
     print_info "Installing plugins via vim-plug..."
-
+    copy_plugins_tmp
     vim -N -u "$HOME/.vimrc" -c 'PlugInstall --sync' -c 'qa!' >/dev/null 2>&1 &
     local vim_pid=$!
     progress "percent" $vim_pid "${CYAN}[PROGRESS]${NC} vim-plug plugins"
@@ -98,6 +104,7 @@ install_plugins() {
 
       if [ $plugin_count -gt 0 ]; then
         print_success "Plugins installed via vim-plug (${plugin_count} plugins)"
+        create_clean_vimrc
       else
         print_warning "No plugins found. Check your plugins.vim configuration"
       fi
