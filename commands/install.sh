@@ -85,7 +85,7 @@ install_plugins() {
   if [ -f "${HOME}/.vim/autoload/plug.vim" ] || [ -f "${HOME}/.local/share/nvim/site/autoload/plug.vim" ]; then
     print_info "Installing plugins via vim-plug..."
 
-    (vim --not-a-term -N -u "$HOME/.vimrc" -c 'PlugInstall --sync' -c 'qa!') > /dev/null 2>&1 &
+    (vim --not-a-term -N -u "$HOME/.vimrc" -c 'PlugInstall --sync' -c 'qa!' > /dev/null) 2>&1 &
     local vim_pid=$!
     progress "percent" $vim_pid "${CYAN}[PROGRESS]${NC} vim-plug plugins"
     wait $vim_pid
