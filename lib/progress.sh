@@ -65,13 +65,21 @@ progress_percentage() {
   local max_duration=${3:-60}
   local duration=0
   local percent=0
+  local max_percent=100
+  local start=$(date +%s)
 
-  while [[ "$percent" -lt 100 ]]; do
+  while [[ $percent -lt $max_percent ]]; do
+    local end=$(date +%s)
+    local delay=$(((end - start) % 4))
     percent=$((duration * 100 / max_duration))
+    if kill -0 "$pid" 2>/dev/null; then
+      sleep 0
+    fi
     echo -ne "\r${CYAN}${message}${NC}: ${percent}%"
-    sleep 1
+    sleep $delay
     duration=$((duration + 1))
   done
+
   echo ""
 }
 
