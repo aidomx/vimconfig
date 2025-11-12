@@ -6,19 +6,19 @@ vcfg_cmd_update() {
   print_header "Updating Plugins"
 
   case "$plugin_manager" in
-    "vim-plug")
-      update_vimplug_plugins
-      ;;
-    "packer.nvim")
-      update_packer_plugins
-      ;;
-    "lazy.nvim")
-      update_lazy_plugins
-      ;;
-    *)
-      print_error "Unsupported plugin manager: $plugin_manager"
-      return 1
-      ;;
+  "vim-plug")
+    update_vimplug_plugins
+    ;;
+  "packer.nvim")
+    update_packer_plugins
+    ;;
+  "lazy.nvim")
+    update_lazy_plugins
+    ;;
+  *)
+    print_error "Unsupported plugin manager: $plugin_manager"
+    return 1
+    ;;
   esac
 }
 
@@ -36,7 +36,7 @@ update_vimplug_plugins() {
         plugins+=("$plugin")
       fi
     fi
-  done < "$PLUGINS_FILE"
+  done <"$PLUGINS_FILE"
 
   local total=${#plugins[@]}
 
@@ -48,54 +48,35 @@ update_vimplug_plugins() {
   print_info "Found ${total} plugin(s) to update"
   echo ""
 
-  local current=0
-  local updated=0
-  local failed=0
+  local current=0 updated=0 failed=0
 
   for plugin in "${plugins[@]}"; do
     current=$((current + 1))
     local plugin_name="${plugin##*/}"
     local plugin_dir="${VIM_PLUGINS_DIR}/${plugin_name}"
 
-    # Calculate percentage
-    local percent=$((current * 100 / total))
-
-    # Progress bar (20 chars width)
-    local filled=$((percent / 5))
-    local empty=$((20 - filled))
-    local bar=$(printf "%${filled}s" | tr ' ' '#')
-    local space=$(printf "%${empty}s" | tr ' ' '-')
-
-    # Display progress
-    printf "\r[${GREEN}${bar}${NC}${space}] ${percent}%% - Updating: ${CYAN}%-40s${NC}" "$plugin_name"
-
     # Update plugin if directory exists
     if [ -d "$plugin_dir" ]; then
       if [ -d "$plugin_dir/.git" ]; then
         cd "$plugin_dir"
-        local output=$(git pull --quiet 2>&1)
-        local exit_code=$?
 
-        if [ $exit_code -eq 0 ]; then
-          if echo "$output" | grep -q "Already up to date"; then
-            # No update needed
-            :
-          else
-            updated=$((updated + 1))
-          fi
-        else
+        local message=$(printf "${CYAN}[%2d/%2d]${NC} ${YELLOW}(Updating)${NC} %-16s" $current $total $plugin_name)
+
+        (git pull --quiet 2>&1) &
+        local pid=$!
+        progress bar $pid "${message}" 16
+        wait $pid || {
           failed=$((failed + 1))
-        fi
-        cd - > /dev/null 2>&1
+        }
+
+        updated=$((updated + 1))
+        cd - >/dev/null 2>&1
       fi
     fi
   done
 
   # Clear progress line and show results
   printf "\r%-80s\r" " "
-  echo ""
-  echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-  echo ""
 
   if [ $updated -gt 0 ]; then
     print_success "Updated: ${updated} plugin(s)"
@@ -114,10 +95,10 @@ update_vimplug_plugins() {
 update_packer_plugins() {
   print_info "Updating plugins via packer.nvim..."
 
-  nvim --headless -c 'PackerSync' -c 'qa!' > /dev/null 2>&1 &
+  nvim --headless -c 'PackerSync' -c 'qa!' >/dev/null 2>&1 &
   local pid=$!
   spinner "$pid" "Updating packer.nvim plugins"
-  wait "$pid" 2> /dev/null || true
+  wait "$pid" 2>/dev/null || true
 
   print_success "Packer plugins updated successfully!"
 }
@@ -125,10 +106,10 @@ update_packer_plugins() {
 update_lazy_plugins() {
   print_info "Updating plugins via lazy.nvim..."
 
-  nvim --headless -c 'Lazy update' -c 'qa!' > /dev/null 2>&1 &
+  nvim --headless -c 'Lazy update' -c 'qa!' >/dev/null 2>&1 &
   local pid=$!
   spinner "$pid" "Updating lazy.nvim plugins"
-  wait "$pid" 2> /dev/null || true
+  wait "$pid" 2>/dev/null || true
 
   print_success "Lazy plugins updated successfully!"
 }
