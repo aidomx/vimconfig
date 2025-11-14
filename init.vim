@@ -31,6 +31,8 @@ if g:is_termux
 endif
 
 " Load language configurations
+" Don't remove 'define LANGUAGE' and 'enddef LANGUAGE' from comment
+" #define LANGUAGE
 runtime! langs/android.vim
 runtime! langs/web-basic.vim
 runtime! langs/bash.vim
@@ -38,6 +40,9 @@ runtime! langs/c.vim
 runtime! langs/php.vim
 runtime! langs/python.vim
 runtime! langs/go.vim
+runtime! langs/ts.vim
+" runtime! langs/js.vim
+" #enddef LANGUAGE
 
 " Load framework configurations
 runtime! frameworks/laravel.vim

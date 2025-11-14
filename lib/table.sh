@@ -20,7 +20,7 @@ create_table() {
       no_border=true
     elif [[ ${#headers[@]} -eq 0 ]]; then
       # First argument is headers (comma separated)
-      IFS=',' read -ra headers <<< "$arg"
+      IFS=',' read -ra headers <<<"$arg"
     else
       # Rest are data lines
       data+=("$arg")
@@ -34,7 +34,7 @@ create_table() {
   for ((i = 0; i < col_count; i++)); do
     local max_length=${#headers[i]}
     for line in "${data[@]}"; do
-      IFS='|' read -ra fields <<< "$line"
+      IFS='|' read -ra fields <<<"$line"
       if [[ ${#fields[i]} -gt $max_length ]]; then
         max_length=${#fields[i]}
       fi
@@ -55,7 +55,7 @@ create_table() {
 
   # Print table data
   for line in "${data[@]}"; do
-    IFS='|' read -ra fields <<< "$line"
+    IFS='|' read -ra fields <<<"$line"
     print_table_row "${fields[@]}" "${col_widths[@]}"
   done
 
@@ -133,7 +133,7 @@ create_simple_table() {
   local data=()
 
   # Parse headers (comma separated first argument)
-  IFS=',' read -ra headers <<< "$1"
+  IFS=',' read -ra headers <<<"$1"
   shift
 
   # Rest are data lines
@@ -146,7 +146,7 @@ create_simple_table() {
   for ((i = 0; i < col_count; i++)); do
     local max_length=${#headers[i]}
     for line in "${data[@]}"; do
-      IFS='|' read -ra fields <<< "$line"
+      IFS='|' read -ra fields <<<"$line"
       # Remove color codes for accurate length calculation
       local clean_field=$(echo -n "${fields[i]}" | sed 's/\x1b\[[0-9;]*m//g')
       local field_length=${#clean_field}
@@ -181,14 +181,87 @@ create_simple_table() {
 
   # Print data
   for line in "${data[@]}"; do
-    IFS='|' read -ra fields <<< "$line"
+    IFS='|' read -ra fields <<<"$line"
     echo -n " "
     for ((i = 0; i < col_count; i++)); do
-      printf "%-${col_widths[i]}s" "${fields[i]}"
+      printf "%-${col_widths[i]}s" "$(echo -ne ${fields[i]})"
       if [ $i -lt $((col_count - 1)) ]; then
         echo -n " | "
       fi
     done
     echo
   done
+}
+
+create_vertical_table() {
+  local data=()
+  local max_key_length=0
+  local max_value_length=0
+
+  # Parse semua argumen sebagai data key|value
+  for arg in "$@"; do
+    data+=("$arg")
+
+    # Hitung panjang maksimum untuk key dan value
+    IFS='|' read -ra parts <<<"$arg"
+    local key="${parts[0]}"
+    local value="${parts[1]}"
+
+    if [[ ${#key} -gt $max_key_length ]]; then
+      max_key_length=${#key}
+    fi
+
+    if [[ ${#value} -gt $max_value_length ]]; then
+      max_value_length=${#value}
+    fi
+  done
+
+  # Print setiap baris
+  for line in "${data[@]}"; do
+    IFS='|' read -ra parts <<<"$line"
+    local key="${parts[0]}"
+    local value="${parts[1]}"
+
+    printf "| %-${max_key_length}s | %-${max_value_length}s |\n" "$key" "$value"
+  done
+}
+
+create_vertical_table_with_border() {
+  local data=()
+  local max_key_length=0
+  local max_value_length=0
+
+  # Parse data dan hitung panjang maksimum
+  for arg in "$@"; do
+    data+=("$arg")
+
+    IFS='|' read -ra parts <<<"$arg"
+    local key="${parts[0]}"
+    local value="${parts[1]}"
+
+    if [[ ${#key} -gt $max_key_length ]]; then
+      max_key_length=${#key}
+    fi
+
+    if [[ ${#value} -gt $max_value_length ]]; then
+      max_value_length=${#value}
+    fi
+  done
+
+  local total_width=$((max_key_length + max_value_length + 7)) # +7 untuk pipes dan spasi
+
+  # Print top border
+  printf "┌%*s┐\n" $((total_width - 2)) "" | tr ' ' '─'
+
+  # Print data rows
+  for line in "${data[@]}"; do
+    IFS='|' read -ra parts <<<"$line"
+    local key="${parts[0]}"
+    local value="${parts[1]}"
+
+    printf "│ %-${max_key_length}s │ %-${max_value_length}s │\n" "$key" "$value"
+  done
+
+  # Print bottom border
+  printf "└%*s┘\n" $((total_width - 2)) "" | tr ' ' '─'
 }

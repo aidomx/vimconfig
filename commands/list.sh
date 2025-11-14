@@ -4,19 +4,19 @@ vcfg_cmd_list() {
   local plugin_manager=$(detect_plugin_manager)
 
   case "$plugin_manager" in
-    "vim-plug")
-      list_vimplug_plugins
-      ;;
-    "packer.nvim")
-      list_packer_plugins
-      ;;
-    "lazy.nvim")
-      list_lazy_plugins
-      ;;
-    *)
-      print_error "Unsupported plugin manager: $plugin_manager"
-      return 1
-      ;;
+  "vim-plug")
+    list_vimplug_plugins
+    ;;
+  "packer.nvim")
+    list_packer_plugins
+    ;;
+  "lazy.nvim")
+    list_lazy_plugins
+    ;;
+  *)
+    print_error "Unsupported plugin manager: $plugin_manager"
+    return 1
+    ;;
   esac
 }
 
@@ -43,21 +43,21 @@ list_vimplug_plugins() {
 
         # Special case for fzf (installed in custom directory)
         if [[ "$plugin_name" == "fzf" ]]; then
-          if command -v fzf 2 > /dev/null &> 1; then
-            install_status=" ${CYAN}[installed]${NC}"
+          if command -v fzf 2 >/dev/null &>1; then
+            install_status=" ${CYAN}(installed)${NC}"
             count_installed=$((count_installed + 1))
           else
-            install_status=" ${RED}[not installed]${NC}"
+            install_status=" ${RED}(not installed)${NC}"
           fi
         # Standard plugin check
         elif [ -d "${plugins_dir}/${plugin_name}" ]; then
-          install_status=" ${CYAN}[installed]${NC}"
+          install_status=" ${CYAN}(installed)${NC}"
           count_installed=$((count_installed + 1))
         else
-          install_status=" ${RED}[not installed]${NC}"
+          install_status=" ${RED}(not installed)${NC}"
         fi
 
-        echo -e "  ${GREEN}✓${NC} ${WHITE}${plugin}${NC}${install_status}"
+        printf "  ${GREEN}✓${NC} ${WHITE}%-40s${NC}%s\n" "$(echo -e ${plugin})" "$(echo -e ${install_status})"
         count_enabled=$((count_enabled + 1))
       fi
     # Check for disabled plugins (commented out)
@@ -65,18 +65,19 @@ list_vimplug_plugins() {
       local plugin=$(echo "$line" | sed "s/.*Plug[[:space:]]*'\([^']*\)'.*/\1/")
 
       if [ ! -z "$plugin" ] && [ "$plugin" != "$line" ]; then
-        echo -e "  ${YELLOW}⊘${NC} ${WHITE}${plugin}${NC} ${YELLOW}(disabled)${NC}"
+        printf "  ${YELLOW}⊘${NC} ${WHITE}%-40s${NC}%s\n" "$(echo -e ${plugin})" "$(echo -e "${YELLOW}(disabled)${NC}")"
+
         count_disabled=$((count_disabled + 1))
       fi
     fi
-  done < "$PLUGINS_FILE"
+  done <"$PLUGINS_FILE"
 
   echo ""
   print_info "Summary:"
-  echo -e "  ${GREEN}Enabled:${NC}     ${count_enabled}"
-  echo -e "  ${YELLOW}Disabled:${NC}    ${count_disabled}"
-  echo -e "  ${CYAN}Installed:${NC}   ${count_installed}"
-  echo -e "  ${WHITE}Total:${NC}       $((count_enabled + count_disabled))"
+  printf "  ${GREEN}%-10s :${NC} %s\n" "Enabled" "${count_enabled}"
+  printf "  ${YELLOW}%-10s :${NC} %s\n" "Disabled" "${count_disabled}"
+  printf "  ${CYAN}%-10s :${NC} %s\n" "Installed" "${count_installed}"
+  printf "  ${WHITE}%-10s :${NC} %s\n" "Total" "$((count_enabled + count_disabled))"
 
   # Check for orphaned plugins
   check_orphaned_plugins "$plugins_dir" "$PLUGINS_FILE" "vim-plug"
@@ -135,14 +136,14 @@ list_packer_plugins() {
         count_disabled=$((count_disabled + 1))
       fi
     fi
-  done < "$config_file"
+  done <"$config_file"
 
   echo ""
   print_info "Summary:"
-  echo -e "  ${GREEN}Enabled:${NC}     ${count_enabled}"
-  echo -e "  ${YELLOW}Disabled:${NC}    ${count_disabled}"
-  echo -e "  ${CYAN}Installed:${NC}   ${count_installed}"
-  echo -e "  ${WHITE}Total:${NC}       $((count_enabled + count_disabled))"
+  printf "  ${GREEN}%-10s :${NC} %s\n" "Enabled" "${count_enabled}"
+  printf "  ${YELLOW}%-10s :${NC} %s\n" "Disabled" "${count_disabled}"
+  printf "  ${CYAN}%-10s :${NC} %s\n" "Installed" "${count_installed}"
+  printf "  ${WHITE}%-10s :${NC} %s\n" "Total" "$((count_enabled + count_disabled))"
 
   # Check for orphaned plugins
   check_orphaned_plugins "$plugins_dir" "$config_file" "packer.nvim"
@@ -194,14 +195,14 @@ list_lazy_plugins() {
         count_disabled=$((count_disabled + 1))
       fi
     fi
-  done < "$config_file"
+  done <"$config_file"
 
   echo ""
   print_info "Summary:"
-  echo -e "  ${GREEN}Enabled:${NC}     ${count_enabled}"
-  echo -e "  ${YELLOW}Disabled:${NC}    ${count_disabled}"
-  echo -e "  ${CYAN}Installed:${NC}   ${count_installed}"
-  echo -e "  ${WHITE}Total:${NC}       $((count_enabled + count_disabled))"
+  printf "  ${GREEN}%-10s :${NC} %s\n" "Enabled" "${count_enabled}"
+  printf "  ${YELLOW}%-10s :${NC} %s\n" "Disabled" "${count_disabled}"
+  printf "  ${CYAN}%-10s :${NC} %s\n" "Installed" "${count_installed}"
+  printf "  ${WHITE}%-10s :${NC} %s\n" "Total" "$((count_enabled + count_disabled))"
 
   # Check for orphaned plugins
   check_orphaned_plugins "$plugins_dir" "$config_file" "lazy.nvim"
@@ -212,7 +213,7 @@ check_orphaned_plugins() {
   local config_file=$2
   local manager=$3
 
-  if [ -d "$plugins_dir" ] && [ "$(ls -A "$plugins_dir" 2> /dev/null)" ]; then
+  if [ -d "$plugins_dir" ] && [ "$(ls -A "$plugins_dir" 2>/dev/null)" ]; then
     echo ""
     print_info "Checking for orphaned plugins..."
 
@@ -220,15 +221,15 @@ check_orphaned_plugins() {
 
     # Different directory structures for different managers
     case "$manager" in
-      "vim-plug")
-        check_vimplug_orphaned "$plugins_dir" "$config_file"
-        ;;
-      "packer.nvim")
-        check_packer_orphaned "$plugins_dir" "$config_file"
-        ;;
-      "lazy.nvim")
-        check_lazy_orphaned "$plugins_dir" "$config_file"
-        ;;
+    "vim-plug")
+      check_vimplug_orphaned "$plugins_dir" "$config_file"
+      ;;
+    "packer.nvim")
+      check_packer_orphaned "$plugins_dir" "$config_file"
+      ;;
+    "lazy.nvim")
+      check_lazy_orphaned "$plugins_dir" "$config_file"
+      ;;
     esac
   fi
 }
@@ -243,7 +244,7 @@ check_vimplug_orphaned() {
 
     local plugin_name=$(basename "$plugin_dir")
 
-    if ! grep -q "Plug.*${plugin_name}" "$config_file" 2> /dev/null; then
+    if ! grep -q "Plug.*${plugin_name}" "$config_file" 2>/dev/null; then
       if [ $orphaned -eq 0 ]; then
         echo ""
         echo -e "${RED}Orphaned plugins (not in config):${NC}"
@@ -273,7 +274,7 @@ check_packer_orphaned() {
 
         local plugin_name=$(basename "$plugin_dir")
 
-        if ! grep -q "use.*${plugin_name}" "$config_file" 2> /dev/null; then
+        if ! grep -q "use.*${plugin_name}" "$config_file" 2>/dev/null; then
           if [ $orphaned -eq 0 ]; then
             echo ""
             echo -e "${RED}Orphaned plugins (not in config):${NC}"
@@ -302,7 +303,7 @@ check_lazy_orphaned() {
 
     local plugin_name=$(basename "$plugin_dir")
 
-    if ! grep -q "\"${plugin_name}\"" "$config_file" 2> /dev/null; then
+    if ! grep -q "\"${plugin_name}\"" "$config_file" 2>/dev/null; then
       if [ $orphaned -eq 0 ]; then
         echo ""
         echo -e "${RED}Orphaned plugins (not in config):${NC}"

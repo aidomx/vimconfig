@@ -17,11 +17,15 @@ setup_vcfg_paths() {
     export VCFG_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
   fi
 
+  # Initial runtime vim
+  export VCFG_INIT="${VCFG_ROOT}/init.vim"
+
   # Core directories
   export VCFG_CORE_DIR="${VCFG_ROOT}/core"
   export VCFG_COMMANDS_DIR="${VCFG_ROOT}/commands"
   export VCFG_LIB_DIR="${VCFG_ROOT}/lib"
   export VCFG_DOCS_DIR="${VCFG_ROOT}/docs"
+  export VCFG_LANGS_DIR="${VCFG_ROOT}/langs"
 
   # Core files
   export VCFG_SETTINGS_FILE="${VCFG_CORE_DIR}/settings.vim"
@@ -62,20 +66,20 @@ get_vcfg_root() {
 get_core_file() {
   local file_type=$1
   case "$file_type" in
-    "settings") echo "${VCFG_SETTINGS_FILE}" ;;
-    "plugins") echo "${VCFG_PLUGINS_FILE}" ;;
-    "mappings") echo "${VCFG_MAPPINGS_FILE}" ;;
-    *) echo "" ;;
+  "settings") echo "${VCFG_SETTINGS_FILE}" ;;
+  "plugins") echo "${VCFG_PLUGINS_FILE}" ;;
+  "mappings") echo "${VCFG_MAPPINGS_FILE}" ;;
+  *) echo "" ;;
   esac
 }
 
 get_default_file() {
   local file_type=$1
   case "$file_type" in
-    "settings") echo "${VCFG_SETTINGS_DEFAULT}" ;;
-    "plugins") echo "${VCFG_PLUGINS_DEFAULT}" ;;
-    "mappings") echo "${VCFG_MAPPINGS_DEFAULT}" ;;
-    *) echo "" ;;
+  "settings") echo "${VCFG_SETTINGS_DEFAULT}" ;;
+  "plugins") echo "${VCFG_PLUGINS_DEFAULT}" ;;
+  "mappings") echo "${VCFG_MAPPINGS_DEFAULT}" ;;
+  *) echo "" ;;
   esac
 }
 

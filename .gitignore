@@ -8,3 +8,4 @@ README-dev.md
 *.swo
 *.backup
 1
+langs/*.vim

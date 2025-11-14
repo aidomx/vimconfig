@@ -18,26 +18,25 @@ vcfg_cmd_info() {
   fi
 
   case "$plugin_manager" in
-    "vim-plug")
-      info_vimplug_plugin "$plugin" "$config_file"
-      ;;
-    "packer.nvim")
-      info_packer_plugin "$plugin" "$config_file"
-      ;;
-    "lazy.nvim")
-      info_lazy_plugin "$plugin" "$config_file"
-      ;;
-    *)
-      print_error "Unsupported plugin manager: $plugin_manager"
-      return 1
-      ;;
+  "vim-plug")
+    info_vimplug_plugin "$plugin" "$config_file"
+    ;;
+  "packer.nvim")
+    info_packer_plugin "$plugin" "$config_file"
+    ;;
+  "lazy.nvim")
+    info_lazy_plugin "$plugin" "$config_file"
+    ;;
+  *)
+    print_error "Unsupported plugin manager: $plugin_manager"
+    return 1
+    ;;
   esac
 }
 
 info_vimplug_plugin() {
   local plugin=$1
   local config_file=$2
-
   local plugin_line=$(grep "Plug.*${plugin}" "$config_file" | head -n 1)
 
   if [ -z "$plugin_line" ]; then
@@ -47,35 +46,43 @@ info_vimplug_plugin() {
 
   local full_name=$(echo "$plugin_line" | sed -n "s/.*Plug '\([^']*\)'.*/\1/p")
   local is_disabled=$(echo "$plugin_line" | grep -q "^\"" && echo "Yes" || echo "No")
-  local plugins_dir="${HOME}/.vim/plugged"
+  local plugins_dir="${HOME}/.vim/plugged/"
 
   print_header "Plugin Information (vim-plug)"
-  echo -e "${WHITE}Name:${NC}     ${CYAN}${full_name}${NC}"
-  echo -e "${WHITE}Disabled:${NC} ${is_disabled}"
 
-  if [ -d "${plugins_dir}/${full_name##*/}" ]; then
-    echo -e "${WHITE}Status:${NC}   ${GREEN}Installed${NC}"
-    echo -e "${WHITE}Path:${NC}     ${plugins_dir}/${full_name##*/}"
+  printf "${WHITE}%-12s :${NC} ${CYAN}%s${NC}\n" "Name" "${full_name}"
+  printf "${WHITE}%-12s :${NC} %s\n" "Disabled" "${is_disabled}"
+
+  local plugins_path="${plugins_dir}${full_name##*/}"
+  [[ "${full_name##*/}" == "fzf" ]] && plugins_path="${HOME}/.${full_name##*/}"
+
+  local status path current_branch last_commit
+
+  if [[ -d "${plugins_path}" ]]; then
+    status="Installed"
+    path="${plugins_path}"
+    printf "${WHITE}%-12s :${NC} ${GREEN}%s${NC}\n" "Status" "Installed"
+    printf "${WHITE}%-12s :${NC} %s\n" "Path" "${plugins_path}"
 
     # Get local git info
-    local plugin_dir="${plugins_dir}/${full_name##*/}"
-    if [ -d "$plugin_dir/.git" ]; then
-      cd "$plugin_dir"
-      local current_branch=$(git branch --show-current 2> /dev/null)
-      local last_commit=$(git log -1 --format="%h %s" 2> /dev/null)
-      cd - > /dev/null 2>&1
+    if [ -d "$plugins_path/.git" ]; then
+      cd "$plugins_path"
+      current_branch=$(git branch --show-current 2>/dev/null)
+      last_commit=$(git log -1 --format="%h %s" 2>/dev/null)
+      cd - >/dev/null 2>&1
 
       if [ ! -z "$current_branch" ]; then
-        echo -e "${WHITE}Branch:${NC}   ${current_branch}"
+        printf "${WHITE}%-12s :${NC} %s\n" "Branch" "${current_branch}"
       fi
       if [ ! -z "$last_commit" ]; then
-        echo -e "${WHITE}Last commit:${NC} ${last_commit}"
+        printf "${WHITE}%-12s :${NC} %s\n" "Last commit" "${last_commit}"
       fi
     fi
   else
-    echo -e "${WHITE}Status:${NC}   ${YELLOW}Not installed${NC}"
+    printf "${WHITE}%-12s :${NC} ${YELLOW}%s${NC}\n" "Status" "Not installed"
   fi
 
+  echo # Empty line for separation
   show_github_info "$full_name"
 }
 
@@ -95,8 +102,8 @@ info_packer_plugin() {
   local plugins_dir="${HOME}/.local/share/nvim/site/pack/packer"
 
   print_header "Plugin Information (packer.nvim)"
-  echo -e "${WHITE}Name:${NC}     ${CYAN}${full_name}${NC}"
-  echo -e "${WHITE}Disabled:${NC} ${is_disabled}"
+  printf "${WHITE}%-12s :${NC} ${CYAN}%s${NC}\n" "Name" "${full_name}"
+  printf "${WHITE}%-12s :${NC} %s\n" "Disabled" "${is_disabled}"
 
   # Packer stores plugins in start/ and opt/ directories
   local plugin_dirs=(
@@ -113,28 +120,29 @@ info_packer_plugin() {
   done
 
   if [ ! -z "$installed_dir" ]; then
-    echo -e "${WHITE}Status:${NC}   ${GREEN}Installed${NC}"
-    echo -e "${WHITE}Path:${NC}     ${installed_dir}"
-    echo -e "${WHITE}Type:${NC}     ${installed_dir##*/}" # start or opt
+    printf "${WHITE}%-12s :${NC} ${GREEN}%s${NC}\n" "Status" "Installed"
+    printf "${WHITE}%-12s :${NC} %s\n" "Path" "${installed_dir}"
+    printf "${WHITE}%-12s :${NC} %s\n" "Type" "${installed_dir##*/}" # start or opt
 
     # Get local git info
     if [ -d "$installed_dir/.git" ]; then
       cd "$installed_dir"
-      local current_branch=$(git branch --show-current 2> /dev/null)
-      local last_commit=$(git log -1 --format="%h %s" 2> /dev/null)
-      cd - > /dev/null 2>&1
+      local current_branch=$(git branch --show-current 2>/dev/null)
+      local last_commit=$(git log -1 --format="%h %s" 2>/dev/null)
+      cd - >/dev/null 2>&1
 
       if [ ! -z "$current_branch" ]; then
-        echo -e "${WHITE}Branch:${NC}   ${current_branch}"
+        printf "${WHITE}%-12s :${NC} %s\n" "Branch" "${current_branch}"
       fi
       if [ ! -z "$last_commit" ]; then
-        echo -e "${WHITE}Last commit:${NC} ${last_commit}"
+        printf "${WHITE}%-12s :${NC} %s\n" "Last commit" "${last_commit}"
       fi
     fi
   else
-    echo -e "${WHITE}Status:${NC}   ${YELLOW}Not installed${NC}"
+    printf "${WHITE}%-12s :${NC} ${YELLOW}%s${NC}\n" "Status" "Not installed"
   fi
 
+  echo # Empty line for separation
   show_github_info "$full_name"
 }
 
@@ -154,40 +162,40 @@ info_lazy_plugin() {
   local plugins_dir="${HOME}/.local/share/nvim/lazy"
 
   print_header "Plugin Information (lazy.nvim)"
-  echo -e "${WHITE}Name:${NC}     ${CYAN}${full_name}${NC}"
-  echo -e "${WHITE}Disabled:${NC} ${is_disabled}"
+  printf "${WHITE}%-12s :${NC} ${CYAN}%s${NC}\n" "Name" "${full_name}"
+  printf "${WHITE}%-12s :${NC} %s\n" "Disabled" "${is_disabled}"
 
   if [ -d "${plugins_dir}/${full_name##*/}" ]; then
-    echo -e "${WHITE}Status:${NC}   ${GREEN}Installed${NC}"
-    echo -e "${WHITE}Path:${NC}     ${plugins_dir}/${full_name##*/}"
+    printf "${WHITE}%-12s :${NC} ${GREEN}%s${NC}\n" "Status" "Installed"
+    printf "${WHITE}%-12s :${NC} %s\n" "Path" "${plugins_dir}/${full_name##*/}"
 
     # Get local git info
     local plugin_dir="${plugins_dir}/${full_name##*/}"
     if [ -d "$plugin_dir/.git" ]; then
       cd "$plugin_dir"
-      local current_branch=$(git branch --show-current 2> /dev/null)
-      local last_commit=$(git log -1 --format="%h %s" 2> /dev/null)
-      cd - > /dev/null 2>&1
+      local current_branch=$(git branch --show-current 2>/dev/null)
+      local last_commit=$(git log -1 --format="%h %s" 2>/dev/null)
+      cd - >/dev/null 2>&1
 
       if [ ! -z "$current_branch" ]; then
-        echo -e "${WHITE}Branch:${NC}   ${current_branch}"
+        printf "${WHITE}%-12s :${NC} %s\n" "Branch" "${current_branch}"
       fi
       if [ ! -z "$last_commit" ]; then
-        echo -e "${WHITE}Last commit:${NC} ${last_commit}"
+        printf "${WHITE}%-12s :${NC} %s\n" "Last commit" "${last_commit}"
       fi
     fi
   else
-    echo -e "${WHITE}Status:${NC}   ${YELLOW}Not installed${NC}"
+    printf "${WHITE}%-12s :${NC} ${YELLOW}%s${NC}\n" "Status" "Not installed"
   fi
 
+  echo # Empty line for separation
   show_github_info "$full_name"
 }
 
 show_github_info() {
   local full_name=$1
-
   # Try to get GitHub info if curl is available
-  if command -v curl &> /dev/null && [[ "$full_name" =~ / ]]; then
+  if command -v curl &>/dev/null && [[ "$full_name" =~ / ]]; then
     print_info "Fetching GitHub information..."
 
     local github_info=$(curl -s "https://api.github.com/repos/${full_name}")
@@ -198,22 +206,22 @@ show_github_info() {
     local license=$(echo "$github_info" | grep '"license".*"name"' | sed 's/.*"name": "\([^"]*\)".*/\1/' | head -1)
 
     if [ ! -z "$description" ] && [ "$description" != "null" ]; then
-      echo -e "${WHITE}Description:${NC} ${description}"
+      printf "${WHITE}%-12s :${NC} %s\n" "Description" "${description}"
     fi
     if [ ! -z "$stars" ] && [ "$stars" != "null" ]; then
-      echo -e "${WHITE}Stars:${NC}       ${YELLOW}★${NC} ${stars}"
+      printf "${WHITE}%-12s :${NC} ${YELLOW}★${NC} %s\n" "Stars" "${stars}"
     fi
     if [ ! -z "$forks" ] && [ "$forks" != "null" ]; then
-      echo -e "${WHITE}Forks:${NC}       ${BLUE}⑂${NC} ${forks}"
+      printf "${WHITE}%-12s :${NC} ${BLUE}⑂${NC} %s\n" "Forks" "${forks}"
     fi
     if [ ! -z "$license" ] && [ "$license" != "null" ]; then
-      echo -e "${WHITE}License:${NC}     ${license}"
+      printf "${WHITE}%-12s :${NC} %s\n" "License" "${license}"
     fi
     if [ ! -z "$updated" ] && [ "$updated" != "null" ]; then
-      local formatted_date=$(date -d "$updated" "+%Y-%m-%d" 2> /dev/null || echo "$updated")
-      echo -e "${WHITE}Updated:${NC}     ${formatted_date}"
+      local formatted_date=$(date -d "$updated" "+%Y-%m-%d" 2>/dev/null || echo "$updated")
+      printf "${WHITE}%-12s :${NC} %s\n" "Updated" "${formatted_date}"
     fi
   elif [[ "$full_name" =~ / ]]; then
-    echo -e "${WHITE}GitHub:${NC}     https://github.com/${full_name}"
+    printf "${WHITE}%-12s :${NC} %s\n" "GitHub" "https://github.com/${full_name}"
   fi
 }

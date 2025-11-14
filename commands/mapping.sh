@@ -4,48 +4,48 @@ vcfg_cmd_editmap() {
   # Jika ada subcommand, langsung execute
   if [ $# -gt 0 ]; then
     case "$1" in
-      list | ls)
-        list_mappings
-        ;;
-      add)
-        shift
-        if [ $# -eq 2 ]; then
-          add_mapping "$1" "$2"
-        else
-          print_error "Usage: vcfg editmap add <key> <action>"
-          echo "Example: vcfg editmap add '<leader>ff' ':Files<CR>'"
-          return 1
-        fi
-        ;;
-      remove | rm)
-        shift
-        if [ $# -eq 1 ]; then
-          remove_mapping "$1"
-        else
-          print_error "Usage: vcfg editmap remove <key-pattern>"
-          return 1
-        fi
-        ;;
-      search)
-        shift
-        if [ $# -eq 1 ]; then
-          search_mappings "$1"
-        else
-          print_error "Usage: vcfg editmap search <pattern>"
-          return 1
-        fi
-        ;;
-      edit)
-        edit_mappings_file
-        ;;
-      help | h)
-        show_mapping_help
-        ;;
-      *)
-        print_error "Unknown subcommand: $1"
-        echo "Usage: vcfg editmap <list|add|remove|search|edit|help>"
+    list | ls)
+      list_mappings
+      ;;
+    add)
+      shift
+      if [ $# -eq 2 ]; then
+        add_mapping "$1" "$2"
+      else
+        print_error "Usage: vcfg editmap add <key> <action>"
+        echo "Example: vcfg editmap add '<leader>ff' ':Files<CR>'"
         return 1
-        ;;
+      fi
+      ;;
+    remove | rm)
+      shift
+      if [ $# -eq 1 ]; then
+        remove_mapping "$1"
+      else
+        print_error "Usage: vcfg editmap remove <key-pattern>"
+        return 1
+      fi
+      ;;
+    search)
+      shift
+      if [ $# -eq 1 ]; then
+        search_mappings "$1"
+      else
+        print_error "Usage: vcfg editmap search <pattern>"
+        return 1
+      fi
+      ;;
+    edit)
+      edit_mappings_file
+      ;;
+    help | h)
+      show_mapping_help
+      ;;
+    *)
+      print_error "Unknown subcommand: $1"
+      echo "Usage: vcfg editmap <list|add|remove|search|edit|help>"
+      return 1
+      ;;
     esac
     return 0
   fi
@@ -55,7 +55,7 @@ vcfg_cmd_editmap() {
 }
 
 interactive_mapping_editor() {
-  local mappings_file="${VIM_CONFIG_DIR}/core/mappings.vim"
+  local mappings_file="${VCFG_MAPPINGS_FILE}"
 
   if [ ! -f "$mappings_file" ]; then
     print_error "Mappings file not found: $mappings_file"
@@ -79,40 +79,40 @@ interactive_mapping_editor() {
     read -p "$(echo -e "${CYAN}map> ${NC}")" command
 
     case "$command" in
-      list | l)
-        list_mappings
-        ;;
-      add | a)
-        add_mapping_interactive
-        ;;
-      remove | r)
-        remove_mapping_interactive
-        ;;
-      search | s)
-        search_mappings_interactive
-        ;;
-      edit | e)
-        edit_mappings_file
-        ;;
-      quit | q)
-        print_info "Goodbye!"
-        break
-        ;;
-      help | h)
-        show_mapping_help
-        ;;
-      "")
-        # Do nothing on empty input
-        ;;
-      *)
-        # Try to execute as direct command
-        if [[ "$command" =~ ^(list|add|remove|search|edit) ]]; then
-          eval "vcfg_cmd_editmap $command"
-        else
-          print_error "Unknown command: $command"
-          echo "Type 'help' for available commands"
-        fi
-        ;;
+    list | l)
+      list_mappings
+      ;;
+    add | a)
+      add_mapping_interactive
+      ;;
+    remove | r)
+      remove_mapping_interactive
+      ;;
+    search | s)
+      search_mappings_interactive
+      ;;
+    edit | e)
+      edit_mappings_file
+      ;;
+    quit | q)
+      print_info "Goodbye!"
+      break
+      ;;
+    help | h)
+      show_mapping_help
+      ;;
+    "")
+      # Do nothing on empty input
+      ;;
+    *)
+      # Try to execute as direct command
+      if [[ "$command" =~ ^(list|add|remove|search|edit) ]]; then
+        eval "vcfg_cmd_editmap $command"
+      else
+        print_error "Unknown command: $command"
+        echo "Type 'help' for available commands"
+      fi
+      ;;
     esac
   done
 }
@@ -142,7 +142,7 @@ list_mappings() {
 
       echo -e "  ${CYAN}${cmd}${NC} ${GREEN}${mapping}${NC} → ${YELLOW}${action}${NC}"
     fi
-  done < "$mappings_file"
+  done <"$mappings_file"
 
   if [ $count -eq 0 ]; then
     print_warning "No mappings found"
@@ -171,7 +171,7 @@ add_mapping() {
   fi
 
   # Add the mapping
-  echo "$map_cmd $key $action" >> "$mappings_file"
+  echo "$map_cmd $key $action" >>"$mappings_file"
   print_success "Added mapping: ${CYAN}$map_cmd${NC} ${GREEN}$key${NC} → ${YELLOW}$action${NC}"
 
   print_info "Restart Vim or run :source $mappings_file to apply"
@@ -188,10 +188,10 @@ add_mapping_interactive() {
 
   # Set map type
   case "$map_type" in
-    i | I) map_cmd="inoremap" ;;
-    v | V) map_cmd="vnoremap" ;;
-    x | X) map_cmd="xnoremap" ;;
-    *) map_cmd="nnoremap" ;;
+  i | I) map_cmd="inoremap" ;;
+  v | V) map_cmd="vnoremap" ;;
+  x | X) map_cmd="xnoremap" ;;
+  *) map_cmd="nnoremap" ;;
   esac
 
   if [ -z "$key" ] || [ -z "$action" ]; then
@@ -200,7 +200,7 @@ add_mapping_interactive() {
   fi
 
   local mappings_file="${VIM_CONFIG_DIR}/core/mappings.vim"
-  echo "$map_cmd $key $action" >> "$mappings_file"
+  echo "$map_cmd $key $action" >>"$mappings_file"
 
   print_success "Added: ${CYAN}$map_cmd${NC} ${GREEN}$key${NC} → ${YELLOW}$action${NC}"
 }
@@ -213,7 +213,7 @@ remove_mapping() {
   cp "$mappings_file" "${mappings_file}.backup.$$"
 
   # Count matches before removal
-  local match_count=$(grep -c "$pattern" "$mappings_file" 2> /dev/null || echo 0)
+  local match_count=$(grep -c "$pattern" "$mappings_file" 2>/dev/null || echo 0)
 
   if [ $match_count -gt 0 ]; then
     # Show what will be removed
@@ -268,7 +268,7 @@ search_mappings() {
 
       echo -e "  ${CYAN}${cmd}${NC} ${GREEN}${mapping}${NC} → ${YELLOW}${action}${NC}"
     fi
-  done < "$mappings_file"
+  done <"$mappings_file"
 
   if [ $count -eq 0 ]; then
     print_warning "No mappings found matching: '$pattern'"
@@ -297,9 +297,9 @@ edit_mappings_file() {
 
   if [ -n "$EDITOR" ]; then
     $EDITOR "$mappings_file"
-  elif command -v nvim > /dev/null; then
+  elif command -v nvim >/dev/null; then
     nvim "$mappings_file"
-  elif command -v vim > /dev/null; then
+  elif command -v vim >/dev/null; then
     vim "$mappings_file"
   else
     vi "$mappings_file"
