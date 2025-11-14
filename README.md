@@ -23,8 +23,11 @@ A comprehensive, modular Vim configuration optimized for full-stack web developm
 ```bash
 # Using curl
 curl -fsSL https://raw.githubusercontent.com/aidomx/vimconfig/main/install.sh | bash
+```
 
-# Or using wget
+### Or using wget
+
+```bash
 wget -qO- https://raw.githubusercontent.com/aidomx/vimconfig/main/install.sh | bash
 ```
 
